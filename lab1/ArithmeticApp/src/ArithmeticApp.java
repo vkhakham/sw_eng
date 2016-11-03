@@ -40,9 +40,8 @@ public class ArithmeticApp {
                         case "-": result = first - second; break;
                         default: throw new RuntimeException("error in switch");
                     }
-                    for (int j = 0; j < 3; j++) {
-                        expressionList.remove(i - 1);
-                    }
+                    // remove the two numbers and opearator.
+                    expressionList.subList(i-1, i+2).clear();
                     expressionList.add(i - 1, String.valueOf(result));
                     i--;
                 }
