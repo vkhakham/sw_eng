@@ -4,10 +4,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class FibThreads {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
-        int lineLength = scanner.nextInt();
-        int arrLength = scanner.nextInt();
+        int n = Integer.parseInt(args[0]);
+        int lineLength = Integer.parseInt(args[1]);
+        int arrLength = Integer.parseInt(args[2]);
         BlockingQueue<Integer> workingQueue = new LinkedBlockingQueue<>(arrLength);
         new Thread(new Producer(workingQueue, n)).start();
         new Thread(new Consumer(workingQueue, n, lineLength)).start();
