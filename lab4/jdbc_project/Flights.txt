@@ -1,0 +1,18 @@
+2	"Los Angeles"	"Tokyo"	5478	780,99
+7	"Los Angeles"	"Sydney"	7487	1278,56
+13	"Los Angeles"	"Chicago"	1749	220,98
+33	"Los Angeles"	"Honolulu"	2551	375,23
+34	"Los Angeles"	"Honolulu"	2551	425,98
+68	"Chicago"	"New York"	802	202,45
+76	"Chicago"	"Los Angeles"	1749	220,98
+99	"Los Angeles"	"Washington D.C."	2308	235,98
+149	"Pittsburgh"	"New York"	303	116,50
+304	"Minneapolis"	"New York"	991	101,56
+346	"Los Angeles"	"Dallas"	1251	225,43
+387	"Los Angeles"	"Boston"	2606	261,56
+701	"Detroit"	"New York"	470	180,56
+702	"Madison"	"New York"	789	202,34
+2223	"Madison"	"Pittsburgh"	517	189,98
+4884	"Madison"	"Chicago"	84	112,45
+5694	"Madison"	"Minneapolis"	247	120,11
+7789	"Madison"	"Detroit"	319	120,33

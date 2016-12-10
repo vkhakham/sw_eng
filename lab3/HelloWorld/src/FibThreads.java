@@ -4,6 +4,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class FibThreads {
     public static void main(String[] args) {
+        if (args.length != 3) {
+            System.out.println("Wrong number of parameters.");
+            return;
+        }
         int n = Integer.parseInt(args[0]);
         int lineLength = Integer.parseInt(args[1]);
         int arrLength = Integer.parseInt(args[2]);

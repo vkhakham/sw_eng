@@ -1,0 +1,34 @@
+mysql -u katerina
+
+CREATE DATABASE mihlala;
+
+SHOW DATABASES;
+
+USE mihlala;
+
+CREATE TABLE course(num INT, name VARCHAR(40), semestr VARCHAR(10));
+
+SHOW TABLES;
+
+DESCRIBE course;
+
+CREATE TABLE professor(id INT, name VARCHAR(40));
+
+CREATE TABLE teach(pid INT, cnum INT);
+
+INSERT INTO professor VALUES(1, "Avi Soffer");
+
+INSERT INTO professor VALUES(2, "Mati Golani");
+
+SELECT * FROM professor;
+
+LOAD DATA LOCAL INFILE "C:\\My Documents\\teaching\\DB_Mati\\seminar2_MySQL\\courses.txt" INTO TABLE course;
+
+LOAD DATA LOCAL INFILE "C:\\My Documents\\teaching\\DB_Mati\\seminar2_MySQL\\teach.txt" INTO TABLE teach;
+
+SELECT * FROM course;
+
+UPDATE course SET semestr="Winter08-09" WHERE num=61309;
+
+SELECT course.name, professor.name FROM course, professor, teach where course.num=teach.cnum and professor.id=teach.pid;
+ 
