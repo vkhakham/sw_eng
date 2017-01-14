@@ -1,4 +1,6 @@
 import java.io.*;
+
+import common.Message;
 import ocsf.server.*;
 
 public class GoodHealthServer extends AbstractServer {
@@ -15,7 +17,9 @@ public class GoodHealthServer extends AbstractServer {
     }
 
     @Override
-    protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-
+    protected void handleMessageFromClient(Object objMsg, ConnectionToClient client) {
+        Message msg = Message.class.cast(objMsg);
+        String uri = msg.uri;
+        System.out.println(uri);
     }
 }
