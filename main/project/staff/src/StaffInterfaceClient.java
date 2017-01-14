@@ -15,11 +15,18 @@ public class StaffInterfaceClient extends AbstractClient {
      */
     public StaffInterfaceClient(String host, int port) {
         super(host, port);
+        try {
+            openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    protected void handleMessageFromServer(Object msg) {
-
+    protected void handleMessageFromServer(Object objMsg) {
+        Message msg = Message.class.cast(objMsg);
+        String uri = msg.uri;
+        System.out.println(msg.obj);
     }
 
     protected void login(String username, String password) {

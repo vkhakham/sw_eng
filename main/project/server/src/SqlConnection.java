@@ -1,25 +1,15 @@
 import java.sql.*;
 
 class SqlConnection {
-
+    Connection conn;
     SqlConnection() {
-        try
-        {
+        try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-        } catch (Exception ex) {/* handle the error*/}
+        } catch (Exception ex) {  System.out.println("Exception: " + ex.getMessage());}
 
-        try
-        {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://104.155.33.106/goodhealth","root",null);
-
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://104.155.33.106/goodhealth","root",null);
             System.out.println("SQL connection succeed");
-
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM goodhealth.employees;");
-            if (rs.next()){
-                System.out.println("" + rs.getString(2));
-            }
-            conn.close();
         } catch (SQLException ex)
         {/* handle any errors*/
             System.out.println("SQLException: " + ex.getMessage());
@@ -27,6 +17,22 @@ class SqlConnection {
             System.out.println("VendorError: " + ex.getErrorCode());
         }
 
+    }
+
+    boolean login(String username, String password) {
+        Statement stmt = null;
+        try {
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM goodhealth.employees where id = ? and password = ?;");
+            pstmt.setInt(1, Integer.parseInt(username));
+            pstmt.setInt(2, Integer.parseInt(password));
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()){
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     static void incrementPriceResultSet(Connection con) {
