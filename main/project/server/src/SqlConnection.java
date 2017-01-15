@@ -1,6 +1,16 @@
 package server.src;
 
-import java.sql.*;
+import common.ClientType;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 
 class SqlConnection {
     Connection conn;
@@ -18,12 +28,14 @@ class SqlConnection {
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
         }
-
+//        createAppointments();
     }
 
-    boolean employeeExists(int username, int password) {
+    boolean userExists(int username, int password, ClientType clientType) {
         try {
-            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM goodhealth.employees where id = ? and password = ?;");
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM goodhealth."
+                    + (clientType == ClientType.Employee ? "employees" : "patients")
+                    +" where id = ? and password = ?;");
             pstmt.setInt(1, username);
             pstmt.setInt(2, password);
             ResultSet rs = pstmt.executeQuery();
@@ -34,70 +46,52 @@ class SqlConnection {
             e.printStackTrace();
         }
         return false;
+
     }
 
-    boolean loginUser(String username, String password) {
-        Statement stmt = null;
-        try {
-            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM goodhealth.users where id = ? and password = ?;");
-            pstmt.setInt(1, Integer.parseInt(username));
-            pstmt.setInt(2, Integer.parseInt(password));
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()){
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    static void incrementPriceResultSet(Connection con) {
+    void createAppointments() {
         Statement stmt;
         try
         {
-            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            ResultSet rs = stmt.executeQuery("SELECT * FROM flights WHERE distance > 1000");
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT id,role FROM goodhealth.employees");
             while (rs.next()) {
-                rs.updateFloat("price", rs.getFloat("price") + 50);
-                rs.updateRow();
+                createAppointmentsForDcotor(rs.getInt(1), rs.getString(2).equals("dr_gp"));
             }
         } catch (SQLException e) {e.printStackTrace();}
     }
 
-    static void incrementPricePreparedStatement(Connection con) {
-        PreparedStatement stmt;
-        try
-        {
-            stmt = con.prepareStatement("UPDATE flights SET price = (price + 50) WHERE distance > 1000");
-            int ret = stmt.executeUpdate();
-        } catch (SQLException e) {e.printStackTrace();}
+    private void createAppointmentsForDcotor(Integer doctor, boolean isGp) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2017);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
+        int incrementMinutes = isGp ? 15 : 20;
+        for (int month = 0; month < 1; month++) {
+            cal.set(Calendar.MONTH, month);
+            for (int day = 1; day < cal.getActualMaximum(Calendar.DAY_OF_MONTH); day++) {
+                cal.set(Calendar.DAY_OF_MONTH, day);
+                if (cal.get(Calendar.DAY_OF_WEEK) <= 5) {
+                    for (int hour = 8; hour < 16; hour++) {
+                        cal.set(Calendar.HOUR_OF_DAY, hour);
+                        for (int minutes = 0; minutes < 60; minutes+=incrementMinutes){
+                            cal.set(Calendar.MINUTE, minutes);
+                            try
+                            {
+                                PreparedStatement pstmt = conn.prepareStatement(
+                                        "INSERT INTO goodhealth.appointments(time, doctor, patient)VALUES(?, ? , ?);");
+                                Object param = new java.sql.Timestamp(cal.getTime().getTime());
+                                System.out.println("doctor:" + doctor + " time: " + new java.sql.Timestamp(cal.getTime().getTime()));
+                                pstmt.setObject(1, param);
+                                pstmt.setInt(2, doctor);
+                                pstmt.setInt(3, 0);
+                                pstmt.executeUpdate();
+                            } catch (SQLException e) {e.printStackTrace();}
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    public static void printCourses(Connection con)
-    {
-        Statement stmt;
-        try
-        {
-            stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM flights;");
-            while(rs.next())
-            {
-                // Print out the values
-                System.out.println(rs.getString(1)+"  " +rs.getString(2) + "  " + rs.getString(3) + "  " + rs.getString(4)+ "  " + rs.getString(5));
-            }
-            //rs.close();
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) { /* ignored */}
-            }
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException e) { /* ignored */}
-            }
-            //stmt.executeUpdate("UPDATE course SET semestr=\"W08\" WHERE num=61309");
-        } catch (SQLException e) {e.printStackTrace();}
-    }
 }

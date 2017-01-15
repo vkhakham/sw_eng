@@ -49,7 +49,7 @@ public class GoodHealthServer extends AbstractServer {
         Message reply = msg.clone();
         // if user is logged in or doesn't exist - refuse log in.
         if (loggedInUsers.get(msg.clientType).get(msg.id) != null ||
-                !sqlConnection.employeeExists(msg.id, Integer.class.cast(msg.data))) {
+                !sqlConnection.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
             reply.data = Boolean.FALSE;
         } else {   // user exists
             int sessionId = ThreadLocalRandom.current().nextInt(0, 1000000);
@@ -59,6 +59,8 @@ public class GoodHealthServer extends AbstractServer {
         }
         return reply;
     }
+
+    protected Message handle
 
     protected boolean verifySessionId(int id, int sessionId, ClientType clientType) {
         Integer storedSessionId = loggedInUsers.get(clientType).get(id);
