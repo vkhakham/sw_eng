@@ -1,3 +1,5 @@
+package staff.src;
+
 import common.Message;
 
 import java.io.BufferedReader;
@@ -20,7 +22,7 @@ public class StaffInterfaceStart {
 //        catch (Exception ex) {
 //            System.out.println("Unexpected error while reading from console!");
 //        }
-        staffInterfaceClient.login("1", "134");
+        staffInterfaceClient.login("1", "1234");
     }
 }
 

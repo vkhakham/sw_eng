@@ -1,3 +1,5 @@
+package server.src;
+
 import java.sql.*;
 
 class SqlConnection {

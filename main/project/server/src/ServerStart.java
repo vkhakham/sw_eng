@@ -1,3 +1,5 @@
+package server.src;
+
 public class ServerStart {
     public static void main(String[] args) {
         GoodHealthServer sv = new GoodHealthServer(5555);
