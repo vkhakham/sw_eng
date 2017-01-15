@@ -4,6 +4,7 @@ import java.io.*;
 
 import common.ClientType;
 import common.Message;
+import common.Uri;
 import ocsf.client.*;
 
 
@@ -32,7 +33,7 @@ public class StaffInterfaceClient extends AbstractClient {
 
     void login(int username, int password) {
         try {
-            sendToServer(new Message("login", username, null, ClientType.Employee, password));
+            sendToServer(new Message(Uri.Login, username, null, ClientType.Employee, password));
         } catch (IOException e) {
             e.printStackTrace();
         }

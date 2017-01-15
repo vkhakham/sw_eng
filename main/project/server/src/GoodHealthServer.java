@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import common.ClientType;
 import common.Message;
+import common.Uri;
 import ocsf.server.*;
 
 public class GoodHealthServer extends AbstractServer {
@@ -33,7 +34,7 @@ public class GoodHealthServer extends AbstractServer {
         Message msg = Message.class.cast(objMsg);
         Message reply;
         switch (msg.uri) {
-            case "login":
+            case Login:
                 reply = handleLogin(msg); break;
             default: throw new RuntimeException("URI not recognized.");
         }

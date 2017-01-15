@@ -3,13 +3,13 @@ package common;
 import java.io.Serializable;
 
 public class Message implements Serializable {
-    public String uri;
+    public Uri uri;
     public Integer id;
     public Integer sessionId;
     public ClientType clientType;
     public Object data;
 
-    public Message(String uri, Integer id, Integer sessionId, ClientType clientType, Object data) {
+    public Message(Uri uri, Integer id, Integer sessionId, ClientType clientType, Object data) {
         this.uri = uri;
         this.data = data;
         this.id = id;
