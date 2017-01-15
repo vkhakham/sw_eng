@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import common.ClientType;
 import common.Message;
+import common.Uri;
 import ocsf.server.*;
 
 public class GoodHealthServer extends AbstractServer {
@@ -33,7 +34,7 @@ public class GoodHealthServer extends AbstractServer {
         Message msg = Message.class.cast(objMsg);
         Message reply;
         switch (msg.uri) {
-            case "login":
+            case Login:
                 reply = handleLogin(msg); break;
             default: throw new RuntimeException("URI not recognized.");
         }
@@ -48,7 +49,7 @@ public class GoodHealthServer extends AbstractServer {
         Message reply = msg.clone();
         // if user is logged in or doesn't exist - refuse log in.
         if (loggedInUsers.get(msg.clientType).get(msg.id) != null ||
-                !sqlConnection.employeeExists(msg.id, Integer.class.cast(msg.data))) {
+                !sqlConnection.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
             reply.data = Boolean.FALSE;
         } else {   // user exists
             int sessionId = ThreadLocalRandom.current().nextInt(0, 1000000);
@@ -58,6 +59,8 @@ public class GoodHealthServer extends AbstractServer {
         }
         return reply;
     }
+
+    protected Message handle
 
     protected boolean verifySessionId(int id, int sessionId, ClientType clientType) {
         Integer storedSessionId = loggedInUsers.get(clientType).get(id);
