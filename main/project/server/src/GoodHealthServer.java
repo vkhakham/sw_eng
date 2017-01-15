@@ -60,8 +60,6 @@ public class GoodHealthServer extends AbstractServer {
         return reply;
     }
 
-    protected Message handle
-
     protected boolean verifySessionId(int id, int sessionId, ClientType clientType) {
         Integer storedSessionId = loggedInUsers.get(clientType).get(id);
         return storedSessionId.equals(sessionId);
