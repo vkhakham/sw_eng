@@ -21,10 +21,25 @@ class SqlConnection {
 
     }
 
-    boolean login(String username, String password) {
-        Statement stmt = null;
+    boolean employeeExists(int username, int password) {
         try {
             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM goodhealth.employees where id = ? and password = ?;");
+            pstmt.setInt(1, username);
+            pstmt.setInt(2, password);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()){
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    boolean loginUser(String username, String password) {
+        Statement stmt = null;
+        try {
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM goodhealth.users where id = ? and password = ?;");
             pstmt.setInt(1, Integer.parseInt(username));
             pstmt.setInt(2, Integer.parseInt(password));
             ResultSet rs = pstmt.executeQuery();

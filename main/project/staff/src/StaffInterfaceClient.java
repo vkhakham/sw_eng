@@ -1,8 +1,8 @@
 package staff.src;
 
 import java.io.*;
-import java.util.ArrayList;
 
+import common.ClientType;
 import common.Message;
 import ocsf.client.*;
 
@@ -27,16 +27,12 @@ public class StaffInterfaceClient extends AbstractClient {
     @Override
     protected void handleMessageFromServer(Object objMsg) {
         Message msg = Message.class.cast(objMsg);
-        String uri = msg.uri;
-        System.out.println(msg.obj);
+        System.out.println(msg.data);
     }
 
-    protected void login(String username, String password) {
-        ArrayList<String> params = new ArrayList<>();
-        params.add(username);
-        params.add(password);
+    void login(int username, int password) {
         try {
-            sendToServer(new Message("login", params));
+            sendToServer(new Message("login", username, null, ClientType.Employee, password));
         } catch (IOException e) {
             e.printStackTrace();
         }
