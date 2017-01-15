@@ -49,6 +49,16 @@ class SqlConnection {
 
     }
 
+    void getAppointments() {
+        String query = "SELECT goodhealth.appointments.time, goodhealth.appointments.patient,  goodhealth.patients.name\n" +
+                "from goodhealth.appointments\n" +
+                "join goodhealth.patients\n" +
+                "on goodhealth.appointments.patient = goodhealth.patients.id\n" +
+                "and goodhealth.appointments.time >= '2017-01-01' \n" +
+                "and goodhealth.appointments.time < '2017-01-03' \n" +
+                "and goodhealth.appointments.doctor = 1;";
+    }
+
     void createAppointments() {
         Statement stmt;
         try
