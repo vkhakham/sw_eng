@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
+
 //public class StaffInterfaceApplication {
 //    public static void main(String[] args) {
 //        StaffInterfaceController staffInterfaceClient = new StaffInterfaceController("localhost", 5555);
@@ -19,11 +21,14 @@ public class StaffInterfaceApplication extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("login_pane.fxml"));
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader();
+        String fxmlDocPath = "staff/login_pane.fxml";
+        FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
+
         StaffInterfaceController controller = new StaffInterfaceController("localhost", 5555);
         loader.setController(controller);
-        Scene login_scene = new Scene(loader.load(), 450, 200);
+        Scene login_scene = new Scene(loader.load(fxmlStream), 450, 200);
         primaryStage.setTitle("Login");
         primaryStage.setScene(login_scene);
         primaryStage.setResizable(true);

@@ -1,8 +1,5 @@
 package staff;
 
-import java.io.*;
-import java.util.ArrayList;
-
 import common.ClientType;
 import common.Message;
 import common.Uri;
@@ -13,10 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import ocsf.client.*;
+import ocsf.client.AbstractClient;
+
+import java.io.IOException;
 
 
 public class StaffInterfaceController extends AbstractClient {
+    private int session_id;
 
     @FXML
     private TextField user_name_field;
@@ -49,14 +49,19 @@ public class StaffInterfaceController extends AbstractClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Scene PatientsListScene = new Scene(FXMLLoader.load(getClass().getResource("patients_list.fxml")), 500,500);
-        Stage currentStage = (Stage) login_btn.getScene().getWindow();
-        currentStage.setScene(PatientsListScene);
     }
 
     @Override
     protected void handleMessageFromServer(Object objMsg) {
         Message msg = Message.class.cast(objMsg);
+        System.out.println(msg.uri);
         System.out.println(msg.data);
+        switch (msg.uri) {
+            case Login:
+                if (msg.data == Boolean.TRUE){
+                    this.session_id = msg.data;
+                }
+
+        }
     }
 }
