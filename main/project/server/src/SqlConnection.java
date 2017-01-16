@@ -1,6 +1,6 @@
 package server.src;
 
-import common.Appointment;
+import common.ScheduledAppointment;
 import common.ClientType;
 
 import java.sql.Connection;
@@ -15,10 +15,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 class SqlConnection {
 
-    Connection conn;
+    private Connection conn;
+    private static final DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 
     SqlConnection() {
         try {
@@ -38,8 +40,10 @@ class SqlConnection {
     }
 
     private void runTests() {
-        //        createAppointments();
-        //        List<Appointment> dasd = getAppointments(1, "2017-01-01");
+//        createAppointments();
+        List<ScheduledAppointment> dasd = getSechduledAppointments(1, "2017-01-01");
+//        List<Long> dasd = getFreeAppointments(2);
+//        int doctor_id = getGpDoctorIdForPatient(1);
     }
 
     boolean userExists(int username, int password, ClientType clientType) {
@@ -57,32 +61,69 @@ class SqlConnection {
             e.printStackTrace();
         }
         return false;
-
     }
-// '2017-01-01' '2017-01-03'
-    List<Appointment> getAppointments(int doctorId, String date) {
-        List<Appointment> appointments = new ArrayList<>();
+
+    int getGpDoctorIdForPatient(int patientId) {
+        int doctorId = 0;
         try
         {
-            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_APPOINTMENTS_QUERY);
-            // increment day
-            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar dayLaterCal = Calendar.getInstance();
-            dayLaterCal.setTime( dt.parse( date ) );
-            dayLaterCal.add( Calendar.DATE, 1 );
-            //set pstmt params
-            pstmt.setString(1, date);
-            pstmt.setString(2, dt.format(dayLaterCal.getTime()));
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_GP_DOCTOR_ID);
+            pstmt.setInt(1, patientId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                doctorId = rs.getInt(1);
+            } else throw new RuntimeException("patientId id's gp not found.");
+        } catch (RuntimeException | SQLException e) {e.printStackTrace();}
+        return doctorId;
+    }
+
+    List<Long> getFreeAppointments(int doctorId) {
+        List<Long> freeAppointments = new ArrayList<>();
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_DOCTOR_ROLE);
+            pstmt.setInt(1, doctorId);
+            ResultSet rs = pstmt.executeQuery();
+            String doctorRole;
+            if (rs.next()) {
+                doctorRole = rs.getString(1);
+            } else throw new RuntimeException("doctor id not found.");
+            pstmt = conn.prepareStatement(Queries.GET_UNSCHEDULED_APPOINTMENTS_QUERY);
+            // TODO change to 30 90
+            pstmt.setInt(1, doctorRole.equals("dr_gp") ? 2 : 5);
+            pstmt.setInt(2, doctorId);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                freeAppointments.add(rs.getTimestamp(1).getTime());
+            }
+        } catch (RuntimeException | SQLException e) {e.printStackTrace();}
+        return freeAppointments;
+    }
+
+    List<ScheduledAppointment> getSechduledAppointments(int doctorId, String todayDate) {
+        List<ScheduledAppointment> scheduledAppointments = new ArrayList<>();
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_SCHEDULED_APPOINTMENTS_QUERY);
+            pstmt.setString(1, todayDate);
+            pstmt.setString(2, todayDate);
             pstmt.setInt(3, doctorId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Calendar cal = new Calendar.Builder().setInstant(rs.getTimestamp(1).getTime()).build();
                 int patientId = rs.getInt(2);
                 String patientName = rs.getString(3);
-                appointments.add(new Appointment(cal, patientId, patientName));
+                scheduledAppointments.add(new ScheduledAppointment(cal, patientId, patientName));
             }
-        } catch (ParseException | SQLException e) {e.printStackTrace();}
-        return appointments;
+        } catch (SQLException e) {e.printStackTrace();}
+        return scheduledAppointments;
+    }
+
+    Calendar incrementCalendarDays(String date, int increment) throws ParseException {
+        Calendar dayLaterCal = Calendar.getInstance();
+        dayLaterCal.setTime( dt.parse( date ) );
+        dayLaterCal.add( Calendar.DATE, increment );
+        return dayLaterCal;
     }
 
     void createAppointments() {
