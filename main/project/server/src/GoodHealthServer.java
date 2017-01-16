@@ -20,11 +20,9 @@ public class GoodHealthServer extends AbstractServer {
     public GoodHealthServer(int port) {
         super(port);
         sqlConnection = new SqlConnection();
-        Map<Integer, Integer> loggedInPatients = new ConcurrentHashMap<>();
-        Map<Integer, Integer> loggedInEmployees = new ConcurrentHashMap<>();
         loggedInUsers = new EnumMap<>(ClientType.class);
-        loggedInUsers.put(ClientType.Employee, loggedInEmployees);
-        loggedInUsers.put(ClientType.Patient, loggedInPatients);
+        loggedInUsers.put(ClientType.Employee, new ConcurrentHashMap<>());
+        loggedInUsers.put(ClientType.Patient, new ConcurrentHashMap<>());
     }
 
     @Override
@@ -36,6 +34,11 @@ public class GoodHealthServer extends AbstractServer {
                 reply = handleLogin(msg); break;
             case EmployeeGetQueue:
                 reply = employeeGetQueue(msg); break;
+            case PatientGetFreeAppointmentsForGp:
+                reply = patientGetFreeAppointmentsForGp(msg); break;
+            case PatientGetFreeAppointmentsForSpecialist:
+                reply = PatientGetFreeAppointmentsForSpecialist(msg); break;
+//            case PatientGetSpecialistDoctorListWithFreeAppointments:
             default: throw new RuntimeException("URI not recognized.");
         }
         try {
@@ -45,19 +48,33 @@ public class GoodHealthServer extends AbstractServer {
         }
     }
 
+    private Message PatientGetFreeAppointmentsForSpecialist(Message msg) {
+        verifySessionId(msg.id, msg.sessionId, msg.clientType);
+        Message reply = msg.clone();
+        reply.data = sqlConnection.getFreeAppointments(Integer.class.cast(msg.data));
+        return reply;
+    }
+
+    private Message patientGetFreeAppointmentsForGp(Message msg) {
+        verifySessionId(msg.id, msg.sessionId, msg.clientType);
+        Message reply = msg.clone();
+        reply.data = sqlConnection.getFreeAppointments(sqlConnection.getGpDoctorIdForPatient(msg.id));
+        return reply;
+    }
+
     private Message employeeGetQueue(Message msg) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         Message reply = msg.clone();
         String date = String.class.cast(msg.data);
-        List<Appointment> appointments = sqlConnection.getAppointments(msg.id, date);
-        msg.data = appointments;
-        if (appointments.size() == 0) {
+        List<ScheduledAppointment> scheduledAppointments = sqlConnection.getSechduledAppointments(msg.id, date);
+        msg.data = scheduledAppointments;
+        if (scheduledAppointments.size() == 0) {
             reply.error = ErrorType.NotFound;
         }
         return reply;
     }
 
-    protected Message handleLogin(Message msg) {
+    private Message handleLogin(Message msg) {
         Message reply = msg.clone();
         // if user is logged in
         if (loggedInUsers.get(msg.clientType).get(msg.id) != null) {
@@ -67,7 +84,7 @@ public class GoodHealthServer extends AbstractServer {
         // if user doesn't exist - refuse log in.
         if (!sqlConnection.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
             reply.data = Boolean.FALSE;
-            reply.error = ErrorType.NotFound;
+            reply.error = ErrorType.UserNotFound;
         } else {   // user exists and login is valid
             int sessionId = ThreadLocalRandom.current().nextInt(0, 1000000);
             loggedInUsers.get(msg.clientType).put(msg.id, sessionId);
@@ -77,7 +94,7 @@ public class GoodHealthServer extends AbstractServer {
         return reply;
     }
 
-    protected boolean verifySessionId(int id, int sessionId, ClientType clientType) {
+    private boolean verifySessionId(int id, int sessionId, ClientType clientType) {
         Integer storedSessionId = loggedInUsers.get(clientType).get(id);
         return storedSessionId.equals(sessionId);
     }
