@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import common.ClientType;
 import common.Message;
+import common.Uri;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -44,7 +45,7 @@ public class StaffInterfaceController extends AbstractClient {
     @FXML
     void login_pressed(MouseEvent event) throws Exception {
         try {
-            sendToServer(new Message("login", new Integer(user_name_field.getText()), null, ClientType.Employee, new Integer(password_field.getText())));
+            sendToServer(new Message(Uri.Login, new Integer(user_name_field.getText()), null, ClientType.Employee, new Integer(password_field.getText())));
         } catch (IOException e) {
             e.printStackTrace();
         }

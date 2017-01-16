@@ -5,9 +5,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-import common.ClientType;
-import common.Message;
-import common.Uri;
+import common.*;
 import ocsf.server.*;
 
 public class GoodHealthServer extends AbstractServer {
@@ -36,6 +34,8 @@ public class GoodHealthServer extends AbstractServer {
         switch (msg.uri) {
             case Login:
                 reply = handleLogin(msg); break;
+            case EmployeeGetQueue:
+                reply = employeeGetQueue(msg); break;
             default: throw new RuntimeException("URI not recognized.");
         }
         try {
@@ -45,13 +45,30 @@ public class GoodHealthServer extends AbstractServer {
         }
     }
 
+    private Message employeeGetQueue(Message msg) {
+        verifySessionId(msg.id, msg.sessionId, msg.clientType);
+        Message reply = msg.clone();
+        String date = String.class.cast(msg.data);
+        List<Appointment> appointments = sqlConnection.getAppointments(msg.id, date);
+        msg.data = appointments;
+        if (appointments.size() == 0) {
+            reply.error = ErrorType.NotFound;
+        }
+        return reply;
+    }
+
     protected Message handleLogin(Message msg) {
         Message reply = msg.clone();
-        // if user is logged in or doesn't exist - refuse log in.
-        if (loggedInUsers.get(msg.clientType).get(msg.id) != null ||
-                !sqlConnection.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
+        // if user is logged in
+        if (loggedInUsers.get(msg.clientType).get(msg.id) != null) {
             reply.data = Boolean.FALSE;
-        } else {   // user exists
+            reply.error = ErrorType.UserLoggedIn;
+        }
+        // if user doesn't exist - refuse log in.
+        if (!sqlConnection.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
+            reply.data = Boolean.FALSE;
+            reply.error = ErrorType.NotFound;
+        } else {   // user exists and login is valid
             int sessionId = ThreadLocalRandom.current().nextInt(0, 1000000);
             loggedInUsers.get(msg.clientType).put(msg.id, sessionId);
             reply.data = Boolean.TRUE;

@@ -8,6 +8,7 @@ public class Message implements Serializable {
     public Integer sessionId;
     public ClientType clientType;
     public Object data;
+    public ErrorType error;
 
     public Message(Uri uri, Integer id, Integer sessionId, ClientType clientType, Object data) {
         this.uri = uri;
@@ -15,6 +16,7 @@ public class Message implements Serializable {
         this.id = id;
         this.sessionId = sessionId;
         this.clientType = clientType;
+        this.error = ErrorType.Blank;
     }
 
     public Message clone() {

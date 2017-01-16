@@ -1,5 +1,6 @@
 package server.src;
 
+import common.Appointment;
 import common.ClientType;
 
 import java.sql.Connection;
@@ -8,12 +9,17 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
-import java.time.LocalDate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 class SqlConnection {
+
     Connection conn;
+
     SqlConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -28,7 +34,12 @@ class SqlConnection {
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
         }
-//        createAppointments();
+        runTests();
+    }
+
+    private void runTests() {
+        //        createAppointments();
+        //        List<Appointment> dasd = getAppointments(1, "2017-01-01");
     }
 
     boolean userExists(int username, int password, ClientType clientType) {
@@ -48,15 +59,30 @@ class SqlConnection {
         return false;
 
     }
-
-    void getAppointments() {
-        String query = "SELECT goodhealth.appointments.time, goodhealth.appointments.patient,  goodhealth.patients.name\n" +
-                "from goodhealth.appointments\n" +
-                "join goodhealth.patients\n" +
-                "on goodhealth.appointments.patient = goodhealth.patients.id\n" +
-                "and goodhealth.appointments.time >= '2017-01-01' \n" +
-                "and goodhealth.appointments.time < '2017-01-03' \n" +
-                "and goodhealth.appointments.doctor = 1;";
+// '2017-01-01' '2017-01-03'
+    List<Appointment> getAppointments(int doctorId, String date) {
+        List<Appointment> appointments = new ArrayList<>();
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_APPOINTMENTS_QUERY);
+            // increment day
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar dayLaterCal = Calendar.getInstance();
+            dayLaterCal.setTime( dt.parse( date ) );
+            dayLaterCal.add( Calendar.DATE, 1 );
+            //set pstmt params
+            pstmt.setString(1, date);
+            pstmt.setString(2, dt.format(dayLaterCal.getTime()));
+            pstmt.setInt(3, doctorId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Calendar cal = new Calendar.Builder().setInstant(rs.getTimestamp(1).getTime()).build();
+                int patientId = rs.getInt(2);
+                String patientName = rs.getString(3);
+                appointments.add(new Appointment(cal, patientId, patientName));
+            }
+        } catch (ParseException | SQLException e) {e.printStackTrace();}
+        return appointments;
     }
 
     void createAppointments() {
