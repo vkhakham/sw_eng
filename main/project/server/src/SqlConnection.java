@@ -1,5 +1,6 @@
 package server.src;
 
+import common.Doctor;
 import common.ScheduledAppointment;
 import common.ClientType;
 
@@ -40,9 +41,11 @@ class SqlConnection {
     }
 
     private void runTests() {
+//        createAppointmentsForDcotor(5, false);
 //        createAppointments();
-        List<ScheduledAppointment> dasd = getSechduledAppointments(1, "2017-01-01");
+//        List<ScheduledAppointment> dasd = getSechduledAppointments(1, "2017-01-01");
 //        List<Long> dasd = getFreeAppointments(2);
+//        List<Doctor> doctors = getSpecialistDoctorList(4, "dr_orthopedic");
 //        int doctor_id = getGpDoctorIdForPatient(1);
     }
 
@@ -61,6 +64,21 @@ class SqlConnection {
             e.printStackTrace();
         }
         return false;
+    }
+
+    List<Doctor> getSpecialistDoctorList(int patientId, String role) {
+        List<Doctor> doctors = new ArrayList<>();
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_SPECIALIST_DOCTOR_LIST_FOR_PATIENT);
+            pstmt.setInt(1, patientId);
+            pstmt.setString(2, role);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                doctors.add(new Doctor(rs.getInt(1), rs.getString(2), rs.getString(3)));
+            }
+        } catch (RuntimeException | SQLException e) {e.printStackTrace();}
+        return doctors;
     }
 
     int getGpDoctorIdForPatient(int patientId) {
@@ -170,5 +188,4 @@ class SqlConnection {
             }
         }
     }
-
 }

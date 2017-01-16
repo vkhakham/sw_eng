@@ -38,7 +38,8 @@ public class GoodHealthServer extends AbstractServer {
                 reply = patientGetFreeAppointmentsForGp(msg); break;
             case PatientGetFreeAppointmentsForSpecialist:
                 reply = PatientGetFreeAppointmentsForSpecialist(msg); break;
-//            case PatientGetSpecialistDoctorListWithFreeAppointments:
+            case PatientGetSpecialistDoctorList:
+                reply = PatientGetSpecialistDoctorList(msg); break;
             default: throw new RuntimeException("URI not recognized.");
         }
         try {
@@ -46,6 +47,13 @@ public class GoodHealthServer extends AbstractServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private Message PatientGetSpecialistDoctorList(Message msg) {
+        verifySessionId(msg.id, msg.sessionId, msg.clientType);
+        Message reply = msg.clone();
+        reply.data = sqlConnection.getSpecialistDoctorList(msg.id, String.class.cast(msg.data));
+        return reply;
     }
 
     private Message PatientGetFreeAppointmentsForSpecialist(Message msg) {

@@ -26,4 +26,13 @@ class Queries {
             "join goodhealth.patients \n" +
             "on goodhealth.patients.family_doctor = goodhealth.employees.id and goodhealth.patients.id = ?;";
 
+    static final String GET_SPECIALIST_DOCTOR_LIST_FOR_PATIENT =
+            "select distinct goodhealth.employees.id, goodhealth.employees.branch_id, goodhealth.employees.name,\n" +
+            "IFNULL(goodhealth.appointments.time, now()) as time\n" +
+            "from goodhealth.appointments\n" +
+            "right join goodhealth.employees\n" +
+            "on goodhealth.employees.id=goodhealth.appointments.doctor and goodhealth.appointments.patient=? and time < now()\n" +
+            "where goodhealth.employees.role = ?\n" +
+            "order by time";
+
 }

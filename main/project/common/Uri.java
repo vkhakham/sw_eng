@@ -1,6 +1,6 @@
 package common;
 
-public enum Uri {
+public enum Uri  {
     // expects password(Integer)in data, gets Boolean in reply data.
     Login,
     // gets List<Appointment> in reply data.
@@ -9,8 +9,8 @@ public enum Uri {
     PatientGetFreeAppointmentsForGp,
     // expects specialist id(Integer) in data, gets List<Long> in reply data.
     PatientGetFreeAppointmentsForSpecialist,
-    // gets List<Doctor> in reply data.
-    PatientGetSpecialistDoctorListWithFreeAppointments,
+    // expects String role in data, gets List<Doctor> in reply data.
+    PatientGetSpecialistDoctorList,
 
     PatientScheduleAppointment,
 }
