@@ -8,5 +8,6 @@ public class Queries {
             "on goodhealth.appointments.patient = goodhealth.patients.id\n" +
             "and goodhealth.appointments.time >= ? \n" +
             "and goodhealth.appointments.time < ? \n" +
-            "and goodhealth.appointments.doctor = ?;";
+            "and goodhealth.appointments.doctor = ?" +
+            "order by time;";
 }
