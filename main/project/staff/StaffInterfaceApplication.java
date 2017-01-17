@@ -26,7 +26,7 @@ public class StaffInterfaceApplication extends Application {
         String fxmlDocPath = "staff/login_pane.fxml";
         FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
 
-        StaffInterfaceController controller = new StaffInterfaceController("localhost", 5555);
+        LoginController controller = new LoginController("localhost", 5555);
         loader.setController(controller);
         Scene login_scene = new Scene(loader.load(fxmlStream), 450, 200);
         primaryStage.setTitle("Login");

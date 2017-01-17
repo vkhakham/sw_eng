@@ -4,28 +4,19 @@ import common.ClientType;
 import common.Message;
 import common.Uri;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import ocsf.client.AbstractClient;
 
 import java.io.IOException;
 
 
 public class StaffInterfaceController extends AbstractClient {
-    private int session_id;
+    private Integer sessionId;
+    private Integer user;
 
     @FXML
-    private TextField user_name_field;
-
-    @FXML
-    private TextField password_field;
-
-    @FXML
-    private Button login_btn;
+    private Button pickToday;
 
     /**
      * Constructs the client.
@@ -33,8 +24,10 @@ public class StaffInterfaceController extends AbstractClient {
      * @param host the server's host name.
      * @param port the port number.
      */
-    public StaffInterfaceController(String host, int port) {
+    StaffInterfaceController(String host, int port, Integer sessionId, Integer user) {
         super(host, port);
+        this.user = user;
+        this.sessionId = sessionId;
         try {
             openConnection();
         } catch (IOException e) {
@@ -43,25 +36,25 @@ public class StaffInterfaceController extends AbstractClient {
     }
 
     @FXML
-    void login_pressed(MouseEvent event) throws Exception {
+    void GetPatientList(MouseEvent event) throws Exception {
         try {
-            sendToServer(new Message(Uri.Login, new Integer(user_name_field.getText()), null, ClientType.Employee, new Integer(password_field.getText())));
+            sendToServer(new Message(Uri.EmployeeGetQueue, this.user, this.sessionId, ClientType.Employee, "2017-01-01"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected void handleMessageFromServer(Object objMsg) {
+    protected void handleMessageFromServer(Object objMsg){
         Message msg = Message.class.cast(objMsg);
-        System.out.println(msg.uri);
-        System.out.println(msg.data);
         switch (msg.uri) {
-            case Login:
-                if (msg.data == Boolean.TRUE){
-                    this.session_id = msg.data;
-                }
-
+            case EmployeeGetQueue:
+                handleNewPatientList(msg);
+                break;
         }
+    }
+
+    private void handleNewPatientList(Message msg) {
+        System.out.println(msg);
     }
 }
