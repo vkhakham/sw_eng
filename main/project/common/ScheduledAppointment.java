@@ -13,4 +13,16 @@ public class ScheduledAppointment implements Serializable {
         this.patientId = patientId;
         this.patientName = patientName;
     }
+
+    public String getDate() {
+        return date;
+    }
+
+    public Integer getPatientId() {
+        return patientId;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
 }

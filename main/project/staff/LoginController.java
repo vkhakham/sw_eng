@@ -69,18 +69,16 @@ public class LoginController extends AbstractClient {
 
     private void handleLoginSuccess(Message msg) {
         StaffInterfaceController controller = new StaffInterfaceController(this.getHost(), this.getPort(),
-                this.getSessionId(), this.getUserId());
-
+                msg.sessionId, msg.id);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 FXMLLoader loader = new FXMLLoader();
-
-                loader.setController(controller);
                 Stage primaryStage = (Stage) login_btn.getScene().getWindow();
                 String fxmlDocPath = "staff/patients_list.fxml";
                 try {
                     FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
+                    loader.setController(controller);
                     primaryStage.setScene(new Scene(loader.load(fxmlStream), 900, 900));
                     primaryStage.setTitle("Patients List");
                     primaryStage.show();

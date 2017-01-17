@@ -7,12 +7,6 @@ import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 
-//public class StaffInterfaceApplication {
-//    public static void main(String[] args) {
-//        StaffInterfaceController staffInterfaceClient = new StaffInterfaceController("localhost", 5555);
-//        staffInterfaceClient.login(1, 1234);
-//    }
-//}
 
 public class StaffInterfaceApplication extends Application {
 

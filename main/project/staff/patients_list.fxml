@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -8,13 +9,15 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView layoutX="58.0" layoutY="64.0" prefHeight="742.0" prefWidth="784.0">
+      <TableView fx:id="patientsTable" layoutX="58.0" layoutY="64.0" prefHeight="742.0" prefWidth="784.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
+          <TableColumn fx:id="timeColumn" prefWidth="100.0" text="Time" />
+          <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
+          <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
         </columns>
       </TableView>
-      <DatePicker layoutX="54.0" layoutY="21.0" />
-      <Button fx:id="pickToday" layoutX="255.0" layoutY="21.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Today" />
+      <DatePicker fx:id="datePicker" layoutX="58.0" layoutY="21.0" />
+      <Button fx:id="pickToday" layoutX="793.0" layoutY="21.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Today" />
+      <Button fx:id="showDate" layoutX="246.0" layoutY="21.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Show" />
    </children>
 </Pane>
