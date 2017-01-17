@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 class SqlConnection {
@@ -66,6 +65,24 @@ class SqlConnection {
             e.printStackTrace();
         }
         return false;
+    }
+
+    Object getFutureScheduledAppointments(Integer id) {
+        List<ScheduledAppointment> scheduledAppointments = new ArrayList<>();
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_FUTURE_SCHEDULED_APPOINTMENTS_FOR_PATIENT_QUERY);
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                String date = dtDateTime.format(dtDateTime.parse(rs.getString(1)));
+                int patientId = rs.getInt(2);
+                String patientName = rs.getString(3);
+                scheduledAppointments.add(new ScheduledAppointment(date, patientId, doctorId, patientName, null, null));
+            }
+        } catch (ParseException | SQLException e) {e.printStackTrace();}
+        return scheduledAppointments;
+
     }
 
     boolean scheduleAppointment(int patientId, int doctorID, String date) {
@@ -139,7 +156,7 @@ class SqlConnection {
         List<ScheduledAppointment> scheduledAppointments = new ArrayList<>();
         try
         {
-            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_SCHEDULED_APPOINTMENTS_QUERY);
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_SCHEDULED_APPOINTMENTS_FOR_DOCTOR_QUERY);
             pstmt.setString(1, todayDate);
             pstmt.setString(2, todayDate);
             pstmt.setInt(3, doctorId);
@@ -148,7 +165,7 @@ class SqlConnection {
                 String date = dtDateTime.format(dtDateTime.parse(rs.getString(1)));
                 int patientId = rs.getInt(2);
                 String patientName = rs.getString(3);
-                scheduledAppointments.add(new ScheduledAppointment(date, patientId, doctorId, patientName));
+                scheduledAppointments.add(new ScheduledAppointment(date, patientId, doctorId, patientName, null, null));
             }
         } catch (ParseException | SQLException e) {e.printStackTrace();}
         return scheduledAppointments;

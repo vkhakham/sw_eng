@@ -13,8 +13,8 @@ public enum Uri  {
     PatientGetSpecialistDoctorList,
     // expects scheduledAppointment object in data, gets Boolean value of success.
     PatientScheduleAppointment,
-    // gets list of scheduled appontments in reply.
-    PatientGetScheduledAppointments,
+    // gets list of scheduled appointments in reply.
+    PatientGetFutureScheduledAppointments,
     // expects doctor and time in data, gets Boolean value of success.
     PatientUnscheduleAppointment,
 }

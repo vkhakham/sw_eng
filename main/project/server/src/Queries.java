@@ -1,7 +1,7 @@
 package server.src;
 
 class Queries {
-    static final String GET_SCHEDULED_APPOINTMENTS_QUERY =
+    static final String GET_SCHEDULED_APPOINTMENTS_FOR_DOCTOR_QUERY =
             "SELECT goodhealth.appointments.time, goodhealth.appointments.patient,  goodhealth.patients.name \n" +
             "from goodhealth.appointments \n" +
             "join goodhealth.patients \n" +
@@ -11,14 +11,24 @@ class Queries {
             "and goodhealth.appointments.doctor = ? \n" +
             "order by time;";
 
+    static final String GET_FUTURE_SCHEDULED_APPOINTMENTS_FOR_PATIENT_QUERY =
+            "SELECT goodhealth.appointments.time, goodhealth.employees.name, goodhealth.employees.role,\n" +
+            "goodhealth.employees.branch_id, goodhealth.appointments.patient, goodhealth.appointments.doctor\n" +
+            "from goodhealth.appointments\n" +
+            "join goodhealth.employees\n" +
+            "on goodhealth.appointments.doctor=goodhealth.employees.id\n" +
+            "and goodhealth.appointments.patient = ?\n" +
+            "and goodhealth.appointments.time >= date(now() + interval 1 day)\n" +
+            "order by time;\n";
+
     static final String GET_UNSCHEDULED_APPOINTMENTS_QUERY =
             "SELECT goodhealth.appointments.time\n" +
-                    "from goodhealth.appointments\n" +
-                    "where goodhealth.appointments.time >= now()\n" +
-                    "and goodhealth.appointments.time < date(now() + interval ? day)\n" +
-                    "and goodhealth.appointments.doctor = ?\n" +
-                    "and goodhealth.appointments.patient = 0\n" +
-                    "order by time;";
+            "from goodhealth.appointments\n" +
+            "where goodhealth.appointments.time >= now()\n" +
+            "and goodhealth.appointments.time < date(now() + interval ? day)\n" +
+            "and goodhealth.appointments.doctor = ?\n" +
+            "and goodhealth.appointments.patient = 0\n" +
+            "order by time;";
 
     static final String GET_DOCTOR_ROLE = "select role from goodhealth.employees where id = ?;";
 

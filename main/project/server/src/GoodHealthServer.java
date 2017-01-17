@@ -42,6 +42,10 @@ public class GoodHealthServer extends AbstractServer {
                 PatientGetSpecialistDoctorList(msg, reply); break;
             case PatientScheduleAppointment:
                 PatientScheduleAppointment(msg, reply); break;
+            case PatientGetFutureScheduledAppointments:
+                PatientGetFutureScheduledAppointments(msg, reply); break;
+            case PatientUnscheduleAppointment:
+                PatientUnscheduleAppointment(msg, reply); break;
             default: throw new RuntimeException("URI not recognized.");
         }
         try {
@@ -49,6 +53,18 @@ public class GoodHealthServer extends AbstractServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void PatientUnscheduleAppointment(Message msg, Message reply) {
+        verifySessionId(msg.id, msg.sessionId, msg.clientType);
+        ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
+        reply.data = sqlConnection.scheduleAppointment(msg.id, appointment.doctorId, appointment.date);
+    }
+
+    private void PatientGetFutureScheduledAppointments(Message msg, Message reply) {
+        verifySessionId(msg.id, msg.sessionId, msg.clientType);
+        ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
+        reply.data = sqlConnection.getFutureScheduledAppointments(msg.id);
     }
 
     private void PatientScheduleAppointment(Message msg, Message reply) {
