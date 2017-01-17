@@ -47,6 +47,7 @@ class SqlConnection {
 //        List<ScheduledAppointment> dasd = getSechduledAppointments(1, "2017-01-01");
 //        List<String> dasd = getFreeAppointments(2);
 //        List<Doctor> doctors = getSpecialistDoctorList(4, "dr_orthopedic");
+//        scheduleAppointment(1, 1, "2017-01-01 08:00:00");
 //        int doctor_id = getGpDoctorIdForPatient(1);
     }
 
@@ -67,8 +68,18 @@ class SqlConnection {
         return false;
     }
 
-    Boolean scheduleAppointment(Integer id, Long time) {
-        return null;
+    boolean scheduleAppointment(int patientId, int doctorID, String date) {
+        int res = 0;
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.SET_APPOINTMET);
+            pstmt.setInt(1, patientId);
+            pstmt.setString(2, date);
+            pstmt.setInt(3, doctorID);
+            res = pstmt.executeUpdate();
+        } catch (RuntimeException | SQLException e) {e.printStackTrace();}
+
+        return res != 0;
     }
 
     List<Doctor> getSpecialistDoctorList(int patientId, String role) {
@@ -117,8 +128,8 @@ class SqlConnection {
             pstmt.setInt(2, doctorId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                Date date = dtDateTime.parse(rs.getString(1));
-                freeAppointments.add(dtDateTime.format(date));
+                String date = dtDateTime.format(dtDateTime.parse(rs.getString(1)));
+                freeAppointments.add(date);
             }
         } catch (ParseException | RuntimeException | SQLException e) {e.printStackTrace();}
         return freeAppointments;
@@ -137,7 +148,7 @@ class SqlConnection {
                 String date = dtDateTime.format(dtDateTime.parse(rs.getString(1)));
                 int patientId = rs.getInt(2);
                 String patientName = rs.getString(3);
-                scheduledAppointments.add(new ScheduledAppointment(date, patientId, patientName));
+                scheduledAppointments.add(new ScheduledAppointment(date, patientId, doctorId, patientName));
             }
         } catch (ParseException | SQLException e) {e.printStackTrace();}
         return scheduledAppointments;

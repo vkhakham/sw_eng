@@ -35,4 +35,8 @@ class Queries {
             "where goodhealth.employees.role = ?\n" +
             "order by time";
 
+    static final String SET_APPOINTMET = "update goodhealth.appointments\n" +
+            "set goodhealth.appointments.patient = ?\n" +
+            "where goodhealth.appointments.time=? and doctor=? and patient=0;";
+
 }
