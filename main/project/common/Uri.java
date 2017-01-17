@@ -7,7 +7,7 @@ public enum Uri  {
     EmployeeGetQueue,
     // gets List<Long> in reply data.
     PatientGetFreeAppointmentsForGp,
-    // expects specialist id(Integer) in data, gets List<Long> in reply data.
+    // expects specialist id(Integer) in data, gets List<String> in reply data.
     PatientGetFreeAppointmentsForSpecialist,
     // expects String role in data, gets List<Doctor> in reply data.
     PatientGetSpecialistDoctorList,

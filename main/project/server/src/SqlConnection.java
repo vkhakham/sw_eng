@@ -15,12 +15,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 class SqlConnection {
 
     private Connection conn;
-    private static final DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dtDate = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dtDateTime = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
     SqlConnection() {
         try {
@@ -43,7 +45,7 @@ class SqlConnection {
 //        createAppointmentsForDcotor(5, false);
 //        createAppointments();
 //        List<ScheduledAppointment> dasd = getSechduledAppointments(1, "2017-01-01");
-//        List<Long> dasd = getFreeAppointments(2);
+//        List<String> dasd = getFreeAppointments(2);
 //        List<Doctor> doctors = getSpecialistDoctorList(4, "dr_orthopedic");
 //        int doctor_id = getGpDoctorIdForPatient(1);
     }
@@ -98,8 +100,8 @@ class SqlConnection {
         return doctorId;
     }
 
-    List<Long> getFreeAppointments(int doctorId) {
-        List<Long> freeAppointments = new ArrayList<>();
+    List<String> getFreeAppointments(int doctorId) {
+        List<String> freeAppointments = new ArrayList<>();
         try
         {
             PreparedStatement pstmt = conn.prepareStatement(Queries.GET_DOCTOR_ROLE);
@@ -115,9 +117,10 @@ class SqlConnection {
             pstmt.setInt(2, doctorId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                freeAppointments.add(rs.getTimestamp(1).getTime());
+                Date date = dtDateTime.parse(rs.getString(1));
+                freeAppointments.add(dtDateTime.format(date));
             }
-        } catch (RuntimeException | SQLException e) {e.printStackTrace();}
+        } catch (ParseException | RuntimeException | SQLException e) {e.printStackTrace();}
         return freeAppointments;
     }
 
@@ -131,18 +134,18 @@ class SqlConnection {
             pstmt.setInt(3, doctorId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                Calendar cal = new Calendar.Builder().setInstant(rs.getTimestamp(1).getTime()).build();
+                String date = dtDateTime.format(dtDateTime.parse(rs.getString(1)));
                 int patientId = rs.getInt(2);
                 String patientName = rs.getString(3);
-                scheduledAppointments.add(new ScheduledAppointment(cal, patientId, patientName));
+                scheduledAppointments.add(new ScheduledAppointment(date, patientId, patientName));
             }
-        } catch (SQLException e) {e.printStackTrace();}
+        } catch (ParseException | SQLException e) {e.printStackTrace();}
         return scheduledAppointments;
     }
 
     Calendar incrementCalendarDays(String date, int increment) throws ParseException {
         Calendar dayLaterCal = Calendar.getInstance();
-        dayLaterCal.setTime( dt.parse( date ) );
+        dayLaterCal.setTime( dtDate.parse( date ) );
         dayLaterCal.add( Calendar.DATE, increment );
         return dayLaterCal;
     }

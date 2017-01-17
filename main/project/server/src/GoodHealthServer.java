@@ -75,7 +75,7 @@ public class GoodHealthServer extends AbstractServer {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         String date = String.class.cast(msg.data);
         List<ScheduledAppointment> scheduledAppointments = sqlConnection.getSechduledAppointments(msg.id, date);
-        msg.data = scheduledAppointments;
+        reply.data = scheduledAppointments;
         if (scheduledAppointments.size() == 0) {
             reply.error = ErrorType.NotFound;
         }
