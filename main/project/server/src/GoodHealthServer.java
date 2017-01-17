@@ -28,18 +28,20 @@ public class GoodHealthServer extends AbstractServer {
     @Override
     protected void handleMessageFromClient(Object objMsg, ConnectionToClient client) {
         Message msg = Message.class.cast(objMsg);
-        Message reply;
+        Message reply = msg.clone();
         switch (msg.uri) {
             case Login:
-                reply = handleLogin(msg); break;
+                handleLogin(msg, reply); break;
             case EmployeeGetQueue:
-                reply = employeeGetQueue(msg); break;
+                employeeGetQueue(msg, reply); break;
             case PatientGetFreeAppointmentsForGp:
-                reply = patientGetFreeAppointmentsForGp(msg); break;
+                patientGetFreeAppointmentsForGp(msg, reply); break;
             case PatientGetFreeAppointmentsForSpecialist:
-                reply = PatientGetFreeAppointmentsForSpecialist(msg); break;
+                PatientGetFreeAppointmentsForSpecialist(msg, reply); break;
             case PatientGetSpecialistDoctorList:
-                reply = PatientGetSpecialistDoctorList(msg); break;
+                PatientGetSpecialistDoctorList(msg, reply); break;
+            case PatientScheduleAppointment:
+                PatientScheduleAppointment(msg, reply); break;
             default: throw new RuntimeException("URI not recognized.");
         }
         try {
@@ -49,41 +51,37 @@ public class GoodHealthServer extends AbstractServer {
         }
     }
 
-    private Message PatientGetSpecialistDoctorList(Message msg) {
+    private void PatientScheduleAppointment(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        Message reply = msg.clone();
+        reply.data = sqlConnection.scheduleAppointment(msg.id, Long.class.cast(msg.data));
+    }
+
+    private void PatientGetSpecialistDoctorList(Message msg, Message reply) {
+        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         reply.data = sqlConnection.getSpecialistDoctorList(msg.id, String.class.cast(msg.data));
-        return reply;
     }
 
-    private Message PatientGetFreeAppointmentsForSpecialist(Message msg) {
+    private void PatientGetFreeAppointmentsForSpecialist(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        Message reply = msg.clone();
         reply.data = sqlConnection.getFreeAppointments(Integer.class.cast(msg.data));
-        return reply;
     }
 
-    private Message patientGetFreeAppointmentsForGp(Message msg) {
+    private void patientGetFreeAppointmentsForGp(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        Message reply = msg.clone();
         reply.data = sqlConnection.getFreeAppointments(sqlConnection.getGpDoctorIdForPatient(msg.id));
-        return reply;
     }
 
-    private Message employeeGetQueue(Message msg) {
+    private void employeeGetQueue(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        Message reply = msg.clone();
         String date = String.class.cast(msg.data);
         List<ScheduledAppointment> scheduledAppointments = sqlConnection.getSechduledAppointments(msg.id, date);
         msg.data = scheduledAppointments;
         if (scheduledAppointments.size() == 0) {
             reply.error = ErrorType.NotFound;
         }
-        return reply;
     }
 
-    private Message handleLogin(Message msg) {
-        Message reply = msg.clone();
+    private void handleLogin(Message msg, Message reply) {
         // if user is logged in
         if (loggedInUsers.get(msg.clientType).get(msg.id) != null) {
             reply.data = Boolean.FALSE;
@@ -99,7 +97,6 @@ public class GoodHealthServer extends AbstractServer {
             reply.data = Boolean.TRUE;
             reply.sessionId = sessionId;
         }
-        return reply;
     }
 
     private boolean verifySessionId(int id, int sessionId, ClientType clientType) {

@@ -11,6 +11,10 @@ public enum Uri  {
     PatientGetFreeAppointmentsForSpecialist,
     // expects String role in data, gets List<Doctor> in reply data.
     PatientGetSpecialistDoctorList,
-
+    // expects doctorId and time in data, gets Boolean value of success.
     PatientScheduleAppointment,
+    // gets list of scheduled appontments in reply.
+    PatientGetScheduledAppointments,
+    // expects doctor and time in data, gets Boolean value of success.
+    PatientUnscheduleAppointment,
 }
