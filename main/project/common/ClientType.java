@@ -1,6 +1,6 @@
 package common;
 
-public enum ClientType {
+public enum ClientType  {
     Patient,
     Employee
 }

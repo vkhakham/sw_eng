@@ -1,6 +1,6 @@
 package common;
 
-public enum ErrorType {
+public enum ErrorType  {
     Blank,
     UserLoggedIn,
     UserNotFound,
