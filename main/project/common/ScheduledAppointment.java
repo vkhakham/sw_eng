@@ -1,7 +1,6 @@
 package common;
 
 import java.io.Serializable;
-import java.util.Calendar;
 
 public class ScheduledAppointment implements Serializable {
     public String date;
@@ -10,14 +9,42 @@ public class ScheduledAppointment implements Serializable {
     public String patientName;
     public String branch;
     public String doctorName;
+    public String role;
 
-    public ScheduledAppointment(String date, int patientId, Integer doctorId,
-                                String patientName, String branch, String doctorName) {
+    public ScheduledAppointment() {}
+
+    public ScheduledAppointment setDate(String date) {
         this.date = date;
+        return this;
+    }
+
+    public ScheduledAppointment setPatientId(Integer patientId) {
         this.patientId = patientId;
-        this.patientName = patientName;
+        return this;
+    }
+
+    public ScheduledAppointment setDoctorId(Integer doctorId) {
         this.doctorId = doctorId;
+        return this;
+    }
+
+    public ScheduledAppointment setPatientName(String patientName) {
+        this.patientName = patientName;
+        return this;
+    }
+
+    public ScheduledAppointment setBranch(String branch) {
         this.branch = branch;
+        return this;
+    }
+
+    public ScheduledAppointment setDoctorName(String doctorName) {
         this.doctorName = doctorName;
+        return this;
+    }
+
+    public ScheduledAppointment setRole(String role) {
+        this.role = role;
+        return this;
     }
 }
