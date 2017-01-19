@@ -49,4 +49,10 @@ class Queries {
             "set goodhealth.appointments.patient = ?\n" +
             "where goodhealth.appointments.time=? and doctor=? and patient=0;";
 
+    static final String UNSET_APPOINTMET = "update goodhealth.appointments\n" +
+            "set goodhealth.appointments.patient = 0\n" +
+            "where goodhealth.appointments.time=? \n" +
+            "and goodhealth.appointments.time >= date(now() + interval 1 day) \n" +
+            "and doctor=? and patient=?;";
+
 }

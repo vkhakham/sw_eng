@@ -67,8 +67,17 @@ class SqlConnection {
         return false;
     }
 
-    boolean unscheduleAppointment(Integer id, Integer doctorId, String date) {
-        return true;
+    boolean unscheduleAppointment(Integer patientId, Integer doctorId, String date) {
+        int res = 0;
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.UNSET_APPOINTMET);
+            pstmt.setString(1, date);
+            pstmt.setInt(2, doctorId);
+            pstmt.setInt(3, patientId);
+            res = pstmt.executeUpdate();
+        } catch (RuntimeException | SQLException e) {e.printStackTrace();}
+        return res == 1;
     }
 
     List<ScheduledAppointment> getFutureScheduledAppointments(Integer id) {
@@ -103,8 +112,7 @@ class SqlConnection {
             pstmt.setInt(3, doctorID);
             res = pstmt.executeUpdate();
         } catch (RuntimeException | SQLException e) {e.printStackTrace();}
-
-        return res != 0;
+        return res == 1;
     }
 
     List<Doctor> getSpecialistDoctorList(int patientId, String role) {

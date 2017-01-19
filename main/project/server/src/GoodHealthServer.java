@@ -63,7 +63,6 @@ public class GoodHealthServer extends AbstractServer {
 
     private void PatientGetFutureScheduledAppointments(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
         reply.data = sqlConnection.getFutureScheduledAppointments(msg.id);
     }
 
