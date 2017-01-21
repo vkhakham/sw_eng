@@ -4,59 +4,33 @@ import java.io.Serializable;
 
 public class ScheduledAppointment implements Serializable {
     public String date;
-    public Integer patientId;
-    public Integer doctorId;
-    public String patientName;
-    public String branch;
-    public String doctorName;
-    public String role;
+    private Doctor doctor;
+    private Patient patient;
 
-    public ScheduledAppointment() {}
+    public String getDate() {
+        return date;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
 
     public ScheduledAppointment setDate(String date) {
         this.date = date;
         return this;
     }
 
-    public ScheduledAppointment setPatientId(Integer patientId) {
-        this.patientId = patientId;
+    public ScheduledAppointment setDoctor(Doctor doctor) {
+        this.doctor = doctor;
         return this;
     }
 
-    public ScheduledAppointment setDoctorId(Integer doctorId) {
-        this.doctorId = doctorId;
+    public ScheduledAppointment setPatient(Patient patient) {
+        this.patient = patient;
         return this;
-    }
-
-    public ScheduledAppointment setPatientName(String patientName) {
-        this.patientName = patientName;
-        return this;
-    }
-
-    public ScheduledAppointment setBranch(String branch) {
-        this.branch = branch;
-        return this;
-    }
-
-    public ScheduledAppointment setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
-        return this;
-    }
-
-    public ScheduledAppointment setRole(String role) {
-        this.role = role;
-        return this;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public Integer getPatientId() {
-        return patientId;
-    }
-
-    public String getPatientName() {
-        return patientName;
     }
 }

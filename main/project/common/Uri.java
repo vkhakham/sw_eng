@@ -5,9 +5,9 @@ public enum Uri  {
     Login,
     // gets List<Appointment> in reply data.
     EmployeeGetQueue,
-    // gets List<Long> in reply data.
+    // gets FreeAppointments object in reply data.
     PatientGetFreeAppointmentsForGp,
-    // expects specialist id(Integer) in data, gets List<String> in reply data.
+    // expects specialist id(Integer) in data, gets FreeAppointments object in reply data.
     PatientGetFreeAppointmentsForSpecialist,
     // expects String role in data, gets List<Doctor> in reply data.
     PatientGetSpecialistDoctorList,
@@ -15,6 +15,6 @@ public enum Uri  {
     PatientScheduleAppointment,
     // gets list of scheduled appointments in reply.
     PatientGetFutureScheduledAppointments,
-    // expects doctor and time in data, gets Boolean value of success.
+    // expects scheduledAppointment object in data, gets Boolean value of success.
     PatientUnscheduleAppointment,
 }

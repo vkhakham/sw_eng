@@ -30,7 +30,7 @@ class Queries {
             "and goodhealth.appointments.patient = 0\n" +
             "order by time;";
 
-    static final String GET_DOCTOR_ROLE = "select role from goodhealth.employees where id = ?;";
+    static final String GET_DOCTOR_INFORMATION = "select name, branch_id, role from goodhealth.employees where id = ?;";
 
     static final String GET_GP_DOCTOR_ID = "select goodhealth.employees.id from goodhealth.employees \n" +
             "join goodhealth.patients \n" +
@@ -48,5 +48,11 @@ class Queries {
     static final String SET_APPOINTMET = "update goodhealth.appointments\n" +
             "set goodhealth.appointments.patient = ?\n" +
             "where goodhealth.appointments.time=? and doctor=? and patient=0;";
+
+    static final String UNSET_APPOINTMET = "update goodhealth.appointments\n" +
+            "set goodhealth.appointments.patient = 0\n" +
+            "where goodhealth.appointments.time=? \n" +
+            "and goodhealth.appointments.time >= date(now() + interval 1 day) \n" +
+            "and doctor=? and patient=?;";
 
 }

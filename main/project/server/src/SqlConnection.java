@@ -1,8 +1,6 @@
 package server.src;
 
-import common.Doctor;
-import common.ScheduledAppointment;
-import common.ClientType;
+import common.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 class SqlConnection {
@@ -43,7 +42,7 @@ class SqlConnection {
     private void runTests() {
 //        createAppointmentsForDcotor(5, false);
 //        createAppointments();
-//        List<ScheduledAppointment> dasd = getSechduledAppointments(1, "2017-01-01");
+//        List<ScheduledAppointment> dasd = getSechduledAppointmentsForDate(1, "2017-01-01");
 //        List<String> dasd = getFreeAppointments(2);
 //        List<Doctor> doctors = getSpecialistDoctorList(4, "dr_orthopedic");
 //        scheduleAppointment(1, 1, "2017-01-01 08:00:00");
@@ -67,25 +66,34 @@ class SqlConnection {
         return false;
     }
 
-    boolean unscheduleAppointment(Integer id, Integer doctorId, String date) {
-        return true;
+    boolean unscheduleAppointment(Integer patientId, Integer doctorId, String date) {
+        int res = 0;
+        try
+        {
+            PreparedStatement pstmt = conn.prepareStatement(Queries.UNSET_APPOINTMET);
+            pstmt.setString(1, date);
+            pstmt.setInt(2, doctorId);
+            pstmt.setInt(3, patientId);
+            res = pstmt.executeUpdate();
+        } catch (RuntimeException | SQLException e) {e.printStackTrace();}
+        return res == 1;
     }
 
-    List<ScheduledAppointment> getFutureScheduledAppointments(Integer id) {
-        List<ScheduledAppointment> scheduledAppointments = new ArrayList<>();
+    List<ScheduledAppointment> getFutureScheduledAppointments(Integer patientId) {
+        List<ScheduledAppointment> scheduledAppointments = new LinkedList<>();
         try
         {
             PreparedStatement pstmt = conn.prepareStatement(Queries.GET_FUTURE_SCHEDULED_APPOINTMENTS_FOR_PATIENT_QUERY);
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, patientId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 ScheduledAppointment scheduledAppointment = new ScheduledAppointment()
                         .setDate(dtDateTime.format(dtDateTime.parse(rs.getString(1))))
-                        .setDoctorName(rs.getString(2))
-                        .setRole(rs.getString(3))
-                        .setBranch(rs.getString(4))
-                        .setPatientId(rs.getInt(5))
-                        .setDoctorId(rs.getInt(6));
+                        .setDoctor(new Doctor(
+                                rs.getInt(6),
+                                rs.getString(2),
+                                rs.getString(4),
+                                rs.getString(3)));
                 scheduledAppointments.add(scheduledAppointment);
             }
         } catch (ParseException | SQLException e) {e.printStackTrace();}
@@ -103,8 +111,7 @@ class SqlConnection {
             pstmt.setInt(3, doctorID);
             res = pstmt.executeUpdate();
         } catch (RuntimeException | SQLException e) {e.printStackTrace();}
-
-        return res != 0;
+        return res == 1;
     }
 
     List<Doctor> getSpecialistDoctorList(int patientId, String role) {
@@ -116,7 +123,7 @@ class SqlConnection {
             pstmt.setString(2, role);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                doctors.add(new Doctor(rs.getInt(1), rs.getString(2), rs.getString(3)));
+                doctors.add(new Doctor(rs.getInt(1), rs.getString(2), rs.getString(3), role));
             }
         } catch (RuntimeException | SQLException e) {e.printStackTrace();}
         return doctors;
@@ -136,31 +143,34 @@ class SqlConnection {
         return doctorId;
     }
 
-    List<String> getFreeAppointments(int doctorId) {
-        List<String> freeAppointments = new ArrayList<>();
+    FreeAppointments getFreeAppointments(int doctorId) {
+        FreeAppointments freeAppointments = new FreeAppointments();
         try
         {
-            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_DOCTOR_ROLE);
+            PreparedStatement pstmt = conn.prepareStatement(Queries.GET_DOCTOR_INFORMATION);
             pstmt.setInt(1, doctorId);
             ResultSet rs = pstmt.executeQuery();
-            String doctorRole;
             if (rs.next()) {
-                doctorRole = rs.getString(1);
+                freeAppointments.setDoctor(new Doctor(
+                        doctorId,
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getString(3)));
             } else throw new RuntimeException("doctor id not found.");
             pstmt = conn.prepareStatement(Queries.GET_UNSCHEDULED_APPOINTMENTS_QUERY);
             // TODO change to 30 90
-            pstmt.setInt(1, doctorRole.equals("dr_gp") ? 2 : 5);
+            pstmt.setInt(1, freeAppointments.getDoctor().getRole().equals("dr_gp") ? 2 : 5);
             pstmt.setInt(2, doctorId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 String date = dtDateTime.format(dtDateTime.parse(rs.getString(1)));
-                freeAppointments.add(date);
+                freeAppointments.addDate(date);
             }
         } catch (ParseException | RuntimeException | SQLException e) {e.printStackTrace();}
         return freeAppointments;
     }
 
-    List<ScheduledAppointment> getSechduledAppointments(int doctorId, String todayDate) {
+    List<ScheduledAppointment> getSechduledAppointmentsForDate(int doctorId, String todayDate) {
         List<ScheduledAppointment> scheduledAppointments = new ArrayList<>();
         try
         {
@@ -172,8 +182,7 @@ class SqlConnection {
             while (rs.next()) {
                 ScheduledAppointment scheduledAppointment = new ScheduledAppointment()
                         .setDate(dtDateTime.format(dtDateTime.parse(rs.getString(1))))
-                        .setPatientId(rs.getInt(2))
-                        .setPatientName(rs.getString(3));
+                        .setPatient(new Patient(rs.getInt(2), rs.getString(3)));
                 scheduledAppointments.add(scheduledAppointment);
             }
         } catch (ParseException | SQLException e) {e.printStackTrace();}
