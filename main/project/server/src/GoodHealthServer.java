@@ -58,7 +58,7 @@ public class GoodHealthServer extends AbstractServer {
     private void PatientUnscheduleAppointment(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
-        reply.data = sqlConnection.unscheduleAppointment(msg.id, appointment.doctorId, appointment.date);
+        reply.data = sqlConnection.unscheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
     }
 
     private void PatientGetFutureScheduledAppointments(Message msg, Message reply) {
@@ -69,7 +69,7 @@ public class GoodHealthServer extends AbstractServer {
     private void PatientScheduleAppointment(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
-        reply.data = sqlConnection.scheduleAppointment(msg.id, appointment.doctorId, appointment.date);
+        reply.data = sqlConnection.scheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
     }
 
     private void PatientGetSpecialistDoctorList(Message msg, Message reply) {
@@ -90,7 +90,7 @@ public class GoodHealthServer extends AbstractServer {
     private void employeeGetQueue(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         String date = String.class.cast(msg.data);
-        List<ScheduledAppointment> scheduledAppointments = sqlConnection.getSechduledAppointments(msg.id, date);
+        List<ScheduledAppointment> scheduledAppointments = sqlConnection.getSechduledAppointmentsForDate(msg.id, date);
         reply.data = scheduledAppointments;
         if (scheduledAppointments.size() == 0) {
             reply.error = ErrorType.NotFound;
