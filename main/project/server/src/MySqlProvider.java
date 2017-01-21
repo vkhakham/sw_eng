@@ -16,13 +16,13 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-class SqlConnection {
+class MySqlProvider {
 
     private Connection conn;
     private static final DateFormat dtDate = new SimpleDateFormat("yyyy-MM-dd");
     private static final DateFormat dtDateTime = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
-    SqlConnection() {
+    MySqlProvider() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         } catch (Exception ex) {  System.out.println("Exception: " + ex.getMessage());}

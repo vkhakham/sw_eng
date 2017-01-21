@@ -3,9 +3,9 @@ package common;
 import java.io.Serializable;
 
 public class ScheduledAppointment implements Serializable {
-    public String date;
     private Doctor doctor;
     private Patient patient;
+    public String date;
 
     public String getDate() {
         return date;

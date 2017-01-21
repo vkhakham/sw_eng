@@ -1,7 +1,7 @@
 package common;
 
 public class Patient {
-    private int id;
+    private Integer id;
     private String name;
 
     public Patient(int id, String name) {
