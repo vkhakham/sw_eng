@@ -9,7 +9,7 @@ import common.*;
 import ocsf.server.*;
 
 public class GoodHealthServer extends AbstractServer {
-    private SqlConnection sqlConnection;
+    private MySqlProvider mySqlProvider;
     private EnumMap<ClientType, Map<Integer, Integer>> loggedInUsers;
 
     /**
@@ -19,7 +19,7 @@ public class GoodHealthServer extends AbstractServer {
      */
     public GoodHealthServer(int port) {
         super(port);
-        sqlConnection = new SqlConnection();
+        mySqlProvider = new MySqlProvider();
         loggedInUsers = new EnumMap<>(ClientType.class);
         loggedInUsers.put(ClientType.Employee, new ConcurrentHashMap<>());
         loggedInUsers.put(ClientType.Patient, new ConcurrentHashMap<>());
@@ -58,39 +58,39 @@ public class GoodHealthServer extends AbstractServer {
     private void PatientUnscheduleAppointment(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
-        reply.data = sqlConnection.unscheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
+        reply.data = mySqlProvider.unscheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
     }
 
     private void PatientGetFutureScheduledAppointments(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        reply.data = sqlConnection.getFutureScheduledAppointments(msg.id);
+        reply.data = mySqlProvider.getFutureScheduledAppointments(msg.id);
     }
 
     private void PatientScheduleAppointment(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
-        reply.data = sqlConnection.scheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
+        reply.data = mySqlProvider.scheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
     }
 
     private void PatientGetSpecialistDoctorList(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        reply.data = sqlConnection.getSpecialistDoctorList(msg.id, String.class.cast(msg.data));
+        reply.data = mySqlProvider.getSpecialistDoctorList(msg.id, String.class.cast(msg.data));
     }
 
     private void PatientGetFreeAppointmentsForSpecialist(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        reply.data = sqlConnection.getFreeAppointments(Integer.class.cast(msg.data));
+        reply.data = mySqlProvider.getFreeAppointments(Integer.class.cast(msg.data));
     }
 
     private void patientGetFreeAppointmentsForGp(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
-        reply.data = sqlConnection.getFreeAppointments(sqlConnection.getGpDoctorIdForPatient(msg.id));
+        reply.data = mySqlProvider.getFreeAppointments(mySqlProvider.getGpDoctorIdForPatient(msg.id));
     }
 
     private void employeeGetQueue(Message msg, Message reply) {
         verifySessionId(msg.id, msg.sessionId, msg.clientType);
         String date = String.class.cast(msg.data);
-        List<ScheduledAppointment> scheduledAppointments = sqlConnection.getSechduledAppointmentsForDate(msg.id, date);
+        List<ScheduledAppointment> scheduledAppointments = mySqlProvider.getSechduledAppointmentsForDate(msg.id, date);
         reply.data = scheduledAppointments;
         if (scheduledAppointments.size() == 0) {
             reply.error = ErrorType.NotFound;
@@ -104,7 +104,7 @@ public class GoodHealthServer extends AbstractServer {
             reply.error = ErrorType.UserLoggedIn;
         }
         // if user doesn't exist - refuse log in.
-        if (!sqlConnection.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
+        if (!mySqlProvider.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
             reply.data = Boolean.FALSE;
             reply.error = ErrorType.UserNotFound;
         } else {   // user exists and login is valid
