@@ -13,14 +13,14 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="appointments" layoutX="41.0" layoutY="24.0" prefHeight="327.0" prefWidth="538.0">
+                  <TableView fx:id="appointments" layoutX="84.0" layoutY="37.0" prefHeight="276.0" prefWidth="352.0">
                     <columns>
-                      <TableColumn fx:id="futureTimeColumn" prefWidth="94.0" text="Time" />
-                      <TableColumn fx:id="futureDoctorNameColumn" prefWidth="105.0" text="Doctor Name" />
-                      <TableColumn fx:id="futureDoctorRoleColumn" prefWidth="105.0" text="Doctor Role" />
-                      <TableColumn fx:id="cancelButtonColumn" text="Cancel" />
+                      <TableColumn fx:id="futureTimeColumn" prefWidth="110.0" text="Time" />
+                      <TableColumn fx:id="futureDoctorNameColumn" prefWidth="120.0" text="Doctor Name" />
+                      <TableColumn fx:id="futureDoctorRoleColumn" prefWidth="120.0" text="Doctor Role" />
                     </columns>
                   </TableView>
+                  <Button fx:id="refreshBtn" layoutX="14.0" layoutY="37.0" mnemonicParsing="false" onAction="#handleRefreshFutureButton" text="Refresh" />
                </children></AnchorPane>
       </content>
     </Tab>
@@ -35,8 +35,8 @@
                     </items>
                   </MenuButton>
                   <Text layoutX="50.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Doctor Type" wrappingWidth="116.13671875" />
-                  <Text layoutX="100.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Doctors" wrappingWidth="45.13671875" />
-                  <Text layoutX="414.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Times" wrappingWidth="45.13671875" />
+                  <Text layoutX="50.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Doctors" wrappingWidth="45.13671875" />
+                  <Text fx:id="timesText" layoutX="319.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Times" wrappingWidth="45.13671875" />
                   <ListView fx:id="timesList" layoutX="319.0" layoutY="115.0" prefHeight="240.0" prefWidth="240.0" />
                   <TableView fx:id="setAppointmetsDoctorTable" layoutX="45.0" layoutY="116.0" prefHeight="240.0" prefWidth="240.0">
                     <columns>

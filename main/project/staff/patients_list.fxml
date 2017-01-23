@@ -7,17 +7,17 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="522.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView fx:id="patientsTable" layoutX="58.0" layoutY="64.0" prefHeight="742.0" prefWidth="784.0">
+      <TableView fx:id="patientsTable" layoutX="46.0" layoutY="69.0" prefHeight="524.0" prefWidth="431.0">
         <columns>
-          <TableColumn fx:id="timeColumn" prefWidth="100.0" text="Time" />
-          <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
-          <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
+          <TableColumn fx:id="timeColumn" prefWidth="143.0" text="Time" />
+          <TableColumn fx:id="nameColumn" prefWidth="218.0" text="Name" />
+          <TableColumn fx:id="idColumn" prefWidth="47.0" text="ID" />
         </columns>
       </TableView>
-      <DatePicker fx:id="datePicker" layoutX="58.0" layoutY="21.0" />
-      <Button fx:id="pickToday" layoutX="793.0" layoutY="21.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Today" />
-      <Button fx:id="showDate" layoutX="246.0" layoutY="21.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Show" />
+      <DatePicker fx:id="datePicker" layoutX="46.0" layoutY="26.0" />
+      <Button fx:id="pickToday" layoutX="428.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Today" />
+      <Button fx:id="showDate" layoutX="234.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Show" />
    </children>
 </Pane>
