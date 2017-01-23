@@ -104,17 +104,20 @@ public class PatientInterfaceController extends AbstractClient {
         }
     }
 
+    /**
+     * show available Appointments recieved from server in a list
+     *
+     * @param msg
+     */
     private void handlePatientGetFreeAppointmentsForSpecialist(Message msg) {
         ObservableList<String> datesData = FXCollections.observableList(((FreeAppointments)msg.data).getDates());
         Doctor doctor = ((FreeAppointments) msg.data).getDoctor();
-
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 timesList.setItems(datesData);
             }
         });
-
         timesList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             ScheduledAppointment newAppointment  = new ScheduledAppointment();
             newAppointment.setDoctor(doctor);
@@ -124,12 +127,10 @@ public class PatientInterfaceController extends AbstractClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Selected item: " + newValue);
         });
     }
 
     private void handlePatientGetSpecialistDoctorList(Message msg) {
-        System.out.println("msg");
         ObservableList<Doctor> doctors = null;
         setBranchColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Branch"));
         setDoctorNameColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Name"));
@@ -140,9 +141,9 @@ public class PatientInterfaceController extends AbstractClient {
             @Override
             public void run() {
                 setAppointmetsDoctorTable.setItems(finalDoctors);
+                timesList.getItems().clear();
             }
         });
-
         setAppointmetsDoctorTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Doctor>() {
             @Override
             public void changed(ObservableValue<? extends Doctor> observable, Doctor oldValue, Doctor newValue) {
@@ -151,9 +152,9 @@ public class PatientInterfaceController extends AbstractClient {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("Selected item: " + newValue);
             }
         });
+
     }
 
     private void handlePatientGetFreeAppointmentsForGp(Message msg) {
