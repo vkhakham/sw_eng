@@ -1,6 +1,8 @@
 package patient;
 
 import common.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -131,6 +133,21 @@ public class PatientInterfaceController extends AbstractClient {
         setDoctorNameColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Name"));
         ObservableList<Doctor> obsGpDoc = FXCollections.observableList(gpDoc);
         setAppointmetsDoctorTable.setItems(obsGpDoc);
+
+        timesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                ScheduledAppointment newAppointment  = new ScheduledAppointment();
+                newAppointment.setDoctor(doctor);
+                newAppointment.setDate(newValue);
+                try {
+                    sendToServer(new Message(Uri.PatientScheduleAppointment, user, sessionId, ClientType.Patient, newAppointment));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Selected item: " + newValue);
+            }
+        });
     }
 
     private void handleFutureScheduledAppointments(Message msg) {
