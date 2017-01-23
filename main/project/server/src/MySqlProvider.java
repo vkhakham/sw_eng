@@ -20,7 +20,7 @@ class MySqlProvider {
 
     private Connection conn;
     private static final DateFormat dtDate = new SimpleDateFormat("yyyy-MM-dd");
-    private static final DateFormat dtDateTime = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    private static final DateFormat dtDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     MySqlProvider() {
         try {
