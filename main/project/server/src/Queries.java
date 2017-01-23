@@ -37,13 +37,16 @@ class Queries {
             "on goodhealth.patients.family_doctor = goodhealth.employees.id and goodhealth.patients.id = ?;";
 
     static final String GET_SPECIALIST_DOCTOR_LIST_FOR_PATIENT =
-            "select distinct goodhealth.employees.id, goodhealth.employees.branch_id, goodhealth.employees.name,\n" +
-            "IFNULL(goodhealth.appointments.time, now()) as time\n" +
-            "from goodhealth.appointments\n" +
-            "right join goodhealth.employees\n" +
-            "on goodhealth.employees.id=goodhealth.appointments.doctor and goodhealth.appointments.patient=? and time < now()\n" +
-            "where goodhealth.employees.role = ?\n" +
-            "order by time";
+            "select EMP.id, EMP.name, EMP.branch_id, EMP.role, last_visit\n" +
+					"from goodhealth.employees EMP \n" +
+					"left join \n" +
+					"(\n" +
+					"\tselect APPNT.doctor, (max(APPNT.time)) AS last_visit \n" +
+					"\tfrom goodhealth.appointments APPNT \n" +
+					"\tWHERE APPNT.patient = ? and APPNT.time<= now() \n" +
+					"\tgroup by APPNT.doctor\n" +
+					") APPNT on EMP.id=APPNT.doctor where EMP.role=?\n" +
+					"order by last_visit desc\n";
 
     static final String SET_APPOINTMET = "update goodhealth.appointments\n" +
             "set goodhealth.appointments.patient = ?\n" +

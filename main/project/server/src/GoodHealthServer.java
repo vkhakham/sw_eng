@@ -17,7 +17,7 @@ public class GoodHealthServer extends AbstractServer {
      *
      * @param port the port number on which to listen.
      */
-    public GoodHealthServer(int port) {
+    GoodHealthServer(int port) {
         super(port);
         mySqlProvider = new MySqlProvider();
         loggedInUsers = new EnumMap<>(ClientType.class);
@@ -29,24 +29,33 @@ public class GoodHealthServer extends AbstractServer {
     protected void handleMessageFromClient(Object objMsg, ConnectionToClient client) {
         Message msg = Message.class.cast(objMsg);
         Message reply = msg.clone();
-        switch (msg.uri) {
-            case Login:
-                handleLogin(msg, reply); break;
-            case EmployeeGetQueue:
-                employeeGetQueue(msg, reply); break;
-            case PatientGetFreeAppointmentsForGp:
-                patientGetFreeAppointmentsForGp(msg, reply); break;
-            case PatientGetFreeAppointmentsForSpecialist:
-                PatientGetFreeAppointmentsForSpecialist(msg, reply); break;
-            case PatientGetSpecialistDoctorList:
-                PatientGetSpecialistDoctorList(msg, reply); break;
-            case PatientScheduleAppointment:
-                PatientScheduleAppointment(msg, reply); break;
-            case PatientGetFutureScheduledAppointments:
-                PatientGetFutureScheduledAppointments(msg, reply); break;
-            case PatientUnscheduleAppointment:
-                PatientUnscheduleAppointment(msg, reply); break;
-            default: throw new RuntimeException("URI not recognized.");
+        if (msg.uri.equals(Uri.Login)) {
+            handleLogin(msg, reply);
+        } else {
+            if (!verifySessionId(msg.id, msg.sessionId, msg.clientType)) {
+                reply.data = Boolean.FALSE;
+                reply.error = ErrorType.UserLoggedIn;
+            } else {
+                switch (msg.uri) {
+                    case Login:
+                        handleLogin(msg, reply); break;
+                    case EmployeeGetQueue:
+                        employeeGetQueue(msg, reply); break;
+                    case PatientGetFreeAppointmentsForGp:
+                        patientGetFreeAppointmentsForGp(msg, reply); break;
+                    case PatientGetFreeAppointmentsForSpecialist:
+                        PatientGetFreeAppointmentsForSpecialist(msg, reply); break;
+                    case PatientGetSpecialistDoctorList:
+                        PatientGetSpecialistDoctorList(msg, reply); break;
+                    case PatientScheduleAppointment:
+                        PatientScheduleAppointment(msg, reply); break;
+                    case PatientGetFutureScheduledAppointments:
+                        PatientGetFutureScheduledAppointments(msg, reply); break;
+                    case PatientUnscheduleAppointment:
+                        PatientUnscheduleAppointment(msg, reply); break;
+                    default: throw new RuntimeException("URI not recognized.");
+                }
+            }
         }
         try {
             client.sendToClient(reply);
@@ -56,39 +65,32 @@ public class GoodHealthServer extends AbstractServer {
     }
 
     private void PatientUnscheduleAppointment(Message msg, Message reply) {
-        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
         reply.data = mySqlProvider.unscheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
     }
 
     private void PatientGetFutureScheduledAppointments(Message msg, Message reply) {
-        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         reply.data = mySqlProvider.getFutureScheduledAppointments(msg.id);
     }
 
     private void PatientScheduleAppointment(Message msg, Message reply) {
-        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         ScheduledAppointment appointment = ScheduledAppointment.class.cast(msg.data);
         reply.data = mySqlProvider.scheduleAppointment(msg.id, appointment.getDoctor().getId(), appointment.date);
     }
 
     private void PatientGetSpecialistDoctorList(Message msg, Message reply) {
-        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         reply.data = mySqlProvider.getSpecialistDoctorList(msg.id, String.class.cast(msg.data));
     }
 
     private void PatientGetFreeAppointmentsForSpecialist(Message msg, Message reply) {
-        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         reply.data = mySqlProvider.getFreeAppointments(Integer.class.cast(msg.data));
     }
 
     private void patientGetFreeAppointmentsForGp(Message msg, Message reply) {
-        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         reply.data = mySqlProvider.getFreeAppointments(mySqlProvider.getGpDoctorIdForPatient(msg.id));
     }
 
     private void employeeGetQueue(Message msg, Message reply) {
-        verifySessionId(msg.id, msg.sessionId, msg.clientType);
         String date = String.class.cast(msg.data);
         List<ScheduledAppointment> scheduledAppointments = mySqlProvider.getSechduledAppointmentsForDate(msg.id, date);
         reply.data = scheduledAppointments;

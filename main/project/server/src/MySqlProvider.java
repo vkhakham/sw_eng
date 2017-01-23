@@ -123,7 +123,10 @@ class MySqlProvider {
             pstmt.setString(2, role);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                doctors.add(new Doctor(rs.getInt(1), rs.getString(3), rs.getString(2), role));
+                doctors.add(new Doctor(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4)));
             }
         } catch (RuntimeException | SQLException e) {e.printStackTrace();}
         return doctors;
