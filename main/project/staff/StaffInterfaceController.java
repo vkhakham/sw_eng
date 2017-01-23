@@ -60,6 +60,16 @@ public class StaffInterfaceController extends AbstractClient {
         }
     }
 
+    @Override
+    protected void handleMessageFromServer(Object objMsg){
+        Message msg = Message.class.cast(objMsg);
+        switch (msg.uri) {
+            case EmployeeGetQueue:
+                handleNewPatientList(msg);
+                break;
+        }
+    }
+
     @FXML
     void GetPatientList(Event event) throws Exception {
         LocalDate chosenDate;
@@ -72,16 +82,6 @@ public class StaffInterfaceController extends AbstractClient {
             sendToServer(new Message(Uri.EmployeeGetQueue, this.user, this.sessionId, ClientType.Employee, chosenDate.toString()));
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void handleMessageFromServer(Object objMsg){
-        Message msg = Message.class.cast(objMsg);
-        switch (msg.uri) {
-            case EmployeeGetQueue:
-                handleNewPatientList(msg);
-                break;
         }
     }
 

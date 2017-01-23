@@ -1,4 +1,4 @@
-package staff;
+package patient;
 
 import common.ClientType;
 import common.Message;
@@ -49,7 +49,7 @@ public class LoginController extends AbstractClient {
     @FXML
     void login_pressed(MouseEvent event) throws Exception {
         try {
-            sendToServer(new Message(Uri.Login, new Integer(user_name_field.getText()), null, ClientType.Employee, new Integer(password_field.getText())));
+            sendToServer(new Message(Uri.Login, new Integer(user_name_field.getText()), null, ClientType.Patient, new Integer(password_field.getText())));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,14 +68,14 @@ public class LoginController extends AbstractClient {
     }
 
     private void handleLoginSuccess(Message msg) {
-        StaffInterfaceController controller = new StaffInterfaceController(this.getHost(), this.getPort(),
+        PatientInterfaceController controller = new PatientInterfaceController(this.getHost(), this.getPort(),
                 msg.sessionId, msg.id);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 FXMLLoader loader = new FXMLLoader();
                 Stage primaryStage = (Stage) login_btn.getScene().getWindow();
-                String fxmlDocPath = "staff/patients_list.fxml";
+                String fxmlDocPath = "patient/patient_interface.fxml";
                 try {
                     FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
                     loader.setController(controller);
@@ -87,11 +87,6 @@ public class LoginController extends AbstractClient {
                 }
             }
         });
-        try {
-            closeConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private Integer getSessionId() {
