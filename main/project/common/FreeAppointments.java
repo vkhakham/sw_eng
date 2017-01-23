@@ -1,9 +1,10 @@
 package common;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FreeAppointments {
+public class FreeAppointments implements Serializable {
     private Doctor doctor;
     private List<String> dates;
 
