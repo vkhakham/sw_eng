@@ -1,6 +1,7 @@
 package patient;
 
 import common.*;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import ocsf.client.AbstractClient;
 
@@ -20,6 +22,13 @@ import java.util.List;
 public class PatientInterfaceController extends AbstractClient {
     private Integer sessionId;
     private Integer user;
+    private Doctor doctorTimesAreShownFor;
+
+    @FXML
+    private Button refreshBtn;
+
+    @FXML
+    private Text timesText;
 
     @FXML
     private TableView<Doctor> setAppointmetsDoctorTable;
@@ -57,9 +66,6 @@ public class PatientInterfaceController extends AbstractClient {
     @FXML
     private TableColumn<ScheduledAppointment, String> futureDoctorRoleColumn;
 
-    @FXML
-    private TableColumn<ScheduledAppointment, String> futureAppointmentCancelButtonColumn;
-
     /**
      * Constructs the client.
      *
@@ -85,6 +91,9 @@ public class PatientInterfaceController extends AbstractClient {
             case PatientGetFutureScheduledAppointments:
                 handleFutureScheduledAppointments(msg);
                 break;
+            case PatientGetFreeAppointmentsForSpecialist:
+                handlePatientGetFreeAppointmentsForSpecialist(msg);
+                break;
             case PatientGetFreeAppointmentsForGp:
                 handlePatientGetFreeAppointmentsForGp(msg);
                 break;
@@ -94,6 +103,23 @@ public class PatientInterfaceController extends AbstractClient {
         }
     }
 
+    private void handlePatientGetFreeAppointmentsForSpecialist(Message msg) {
+        ObservableList<String> datesData = FXCollections.observableList(((FreeAppointments)msg.data).getDates());
+        Doctor doctor = ((FreeAppointments) msg.data).getDoctor();
+        timesList.setItems(datesData);
+        timesList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            ScheduledAppointment newAppointment  = new ScheduledAppointment();
+            newAppointment.setDoctor(doctor);
+            newAppointment.setDate(newValue);
+            try {
+                sendToServer(new Message(Uri.PatientScheduleAppointment, user, sessionId, ClientType.Patient, newAppointment));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Selected item: " + newValue);
+        });
+    }
+
     private void handlePatientGetSpecialistDoctorList(Message msg) {
         System.out.println("msg");
         ObservableList<Doctor> doctors = null;
@@ -101,26 +127,18 @@ public class PatientInterfaceController extends AbstractClient {
         setDoctorNameColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Name"));
         doctors = FXCollections.observableList((List<Doctor>) msg.data);
         setAppointmetsDoctorTable.setItems(doctors);
-    }
 
-    @FXML
-    void handleGpMenuChoice(ActionEvent event) {
-        try {
-            sendToServer(new Message(Uri.PatientGetFreeAppointmentsForGp, this.user, this.sessionId, ClientType.Patient, null));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    void handleSpecialistMenuChoice(ActionEvent event) {
-        String type = "dr_" + ((MenuItem) event.getSource()).getText();
-        System.out.println(type);
-        try {
-            sendToServer(new Message(Uri.PatientGetSpecialistDoctorList, this.user, this.sessionId, ClientType.Patient, type));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setAppointmetsDoctorTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Doctor>() {
+            @Override
+            public void changed(ObservableValue<? extends Doctor> observable, Doctor oldValue, Doctor newValue) {
+                try {
+                    sendToServer(new Message(Uri.PatientGetFreeAppointmentsForSpecialist, user, sessionId, ClientType.Patient, newValue.getId()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Selected item: " + newValue);
+            }
+        });
     }
 
     private void handlePatientGetFreeAppointmentsForGp(Message msg) {
@@ -153,45 +171,56 @@ public class PatientInterfaceController extends AbstractClient {
     private void handleFutureScheduledAppointments(Message msg) {
         ObservableList<ScheduledAppointment> tableData = null;
         futureTimeColumn.setCellValueFactory(new PropertyValueFactory<ScheduledAppointment, String>("Date"));
-        futureDoctorNameColumn.setCellValueFactory(new PropertyValueFactory<ScheduledAppointment, String>("DoctorName"));
-        futureDoctorRoleColumn.setCellValueFactory(new PropertyValueFactory<ScheduledAppointment, String>("Role"));
-//        futureAppointmentCancelButtonColumn.setCellValueFactory(new PropertyValueFactory<ScheduledAppointment, String>("DUMMY"));
-//        futureAppointmentCancelButtonColumn.setCellFactory(new Callback<TableColumn<ScheduledAppointment, String>, TableCell<ScheduledAppointment, String>>(){
-//            @Override
-//            public TableCell<ScheduledAppointment, String> call(TableColumn<ScheduledAppointment, String> p) {
-//                final Button btn = new Button( "Cancel" );
-//                TableCell<ScheduledAppointment, String> cell = new TableCell<ScheduledAppointment, String>(){
-//                    @Override
-//                    protected void updateItem(String t, boolean bln) {
-//                        super.updateItem(t, bln);
-//                        if (t != null) {
-//                            btn.setOnAction(( ActionEvent event ) ->
-//                                    {
-//                                        ScheduledAppointment appointmentToCancel = getTableView().getItems().get(getIndex());
-//                                        try {
-//                                            sendToServer(new Message(Uri.PatientUnscheduleAppointment, user, sessionId, ClientType.Patient, appointmentToCancel));
-//                                        } catch (IOException e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                            );
-//                            setGraphic(btn);
-//                            setText(null);
-//                        }
-//                        else {
-//                            setGraphic(null);
-//                            setText(null);
-//                        }
-//                    }
-//
-//                };
-//
-//                return cell;
-//            }
-//        });
+        futureDoctorNameColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ScheduledAppointment, String>, ObservableValue<String>>() {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<ScheduledAppointment, String> p) {
+                if (p.getValue() != null && p.getValue().getDoctor() != null) {
+                    return new SimpleStringProperty(p.getValue().getDoctor().getName());
+                } else {
+                    return new SimpleStringProperty("<No name>");
+                }
+            }
+        });
+        futureDoctorRoleColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ScheduledAppointment, String>, ObservableValue<String>>() {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<ScheduledAppointment, String> p) {
+                if (p.getValue() != null && p.getValue().getDoctor() != null) {
+                    return new SimpleStringProperty(p.getValue().getDoctor().getRole());
+                } else {
+                    return new SimpleStringProperty("<No Role>");
+                }
+            }
+        });
         if (!msg.error.equals(ErrorType.NotFound)) {
             tableData = FXCollections.observableList((List<ScheduledAppointment>) msg.data);
         }
         appointments.setItems(tableData);
+    }
+
+    @FXML
+    void handleGpMenuChoice(ActionEvent event) {
+        try {
+            sendToServer(new Message(Uri.PatientGetFreeAppointmentsForGp, this.user, this.sessionId, ClientType.Patient, null));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void handleSpecialistMenuChoice(ActionEvent event) {
+        String type = "dr_" + ((MenuItem) event.getSource()).getText();
+        System.out.println(type);
+        try {
+            sendToServer(new Message(Uri.PatientGetSpecialistDoctorList, this.user, this.sessionId, ClientType.Patient, type));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void handleRefreshFutureButton(ActionEvent event) {
+        try {
+            sendToServer(new Message(Uri.PatientGetFutureScheduledAppointments, this.user, this.sessionId, ClientType.Patient, null));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
