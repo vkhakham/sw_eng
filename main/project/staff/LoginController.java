@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import ocsf.client.AbstractClient;
 
@@ -30,6 +31,8 @@ public class LoginController extends AbstractClient {
     @FXML
     private Button login_btn;
 
+    @FXML
+    private Text errorText;
 
     /**
      * Constructs the client.
@@ -62,6 +65,8 @@ public class LoginController extends AbstractClient {
             case Login:
                 if (msg.data.equals(Boolean.TRUE)) {
                     handleLoginSuccess(msg);
+                } else {
+                    errorText.setText(msg.error.toString());
                 }
                 break;
         }
@@ -79,7 +84,7 @@ public class LoginController extends AbstractClient {
                 try {
                     FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
                     loader.setController(controller);
-                    primaryStage.setScene(new Scene(loader.load(fxmlStream), 900, 900));
+                    primaryStage.setScene(new Scene(loader.load(fxmlStream), 522, 618));
                     primaryStage.setTitle("Patients List");
                     primaryStage.show();
                 } catch (IOException e) {

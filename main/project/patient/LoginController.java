@@ -79,7 +79,7 @@ public class LoginController extends AbstractClient {
                 try {
                     FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
                     loader.setController(controller);
-                    primaryStage.setScene(new Scene(loader.load(fxmlStream), 900, 900));
+                    primaryStage.setScene(new Scene(loader.load(fxmlStream), 600, 500));
                     primaryStage.setTitle("Patients List");
                     primaryStage.show();
                 } catch (IOException e) {
