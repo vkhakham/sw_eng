@@ -1,6 +1,7 @@
 package patient;
 
 import common.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -106,7 +107,14 @@ public class PatientInterfaceController extends AbstractClient {
     private void handlePatientGetFreeAppointmentsForSpecialist(Message msg) {
         ObservableList<String> datesData = FXCollections.observableList(((FreeAppointments)msg.data).getDates());
         Doctor doctor = ((FreeAppointments) msg.data).getDoctor();
-        timesList.setItems(datesData);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                timesList.setItems(datesData);
+            }
+        });
+
         timesList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             ScheduledAppointment newAppointment  = new ScheduledAppointment();
             newAppointment.setDoctor(doctor);
@@ -126,7 +134,14 @@ public class PatientInterfaceController extends AbstractClient {
         setBranchColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Branch"));
         setDoctorNameColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Name"));
         doctors = FXCollections.observableList((List<Doctor>) msg.data);
-        setAppointmetsDoctorTable.setItems(doctors);
+
+        ObservableList<Doctor> finalDoctors = doctors;
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                setAppointmetsDoctorTable.setItems(finalDoctors);
+            }
+        });
 
         setAppointmetsDoctorTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Doctor>() {
             @Override
@@ -143,14 +158,27 @@ public class PatientInterfaceController extends AbstractClient {
 
     private void handlePatientGetFreeAppointmentsForGp(Message msg) {
         ObservableList<String> datesData = FXCollections.observableList(((FreeAppointments)msg.data).getDates());
-        timesList.setItems(datesData);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                timesList.setItems(datesData);
+            }
+        });
+
         Doctor doctor = ((FreeAppointments) msg.data).getDoctor();
         ArrayList<Doctor> gpDoc = new ArrayList<Doctor>();
         gpDoc.add(doctor);
         setBranchColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Branch"));
         setDoctorNameColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Name"));
         ObservableList<Doctor> obsGpDoc = FXCollections.observableList(gpDoc);
-        setAppointmetsDoctorTable.setItems(obsGpDoc);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                setAppointmetsDoctorTable.setItems(obsGpDoc);
+            }
+        });
 
         timesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -163,7 +191,6 @@ public class PatientInterfaceController extends AbstractClient {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("Selected item: " + newValue);
             }
         });
     }
@@ -192,7 +219,13 @@ public class PatientInterfaceController extends AbstractClient {
         if (!msg.error.equals(ErrorType.NotFound)) {
             tableData = FXCollections.observableList((List<ScheduledAppointment>) msg.data);
         }
-        appointments.setItems(tableData);
+        ObservableList<ScheduledAppointment> finalTableData = tableData;
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                appointments.setItems(finalTableData);
+            }
+        });
     }
 
     @FXML
