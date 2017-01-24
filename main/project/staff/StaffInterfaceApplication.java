@@ -26,6 +26,7 @@ public class StaffInterfaceApplication extends Application {
         primaryStage.setTitle("Login");
         primaryStage.setScene(login_scene);
         primaryStage.setResizable(true);
+        primaryStage.setOnCloseRequest(e -> System.exit(0));
         primaryStage.show();
     }
 }
