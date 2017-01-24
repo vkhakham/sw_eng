@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="454.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
-    <Tab text="Future Appointments">
+    <Tab text="Cancel Appointments">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -27,12 +27,13 @@
     </Tab>
     <Tab text="Set New Appointment">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="506.0" prefWidth="715.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="423.0" prefWidth="600.0">
                <children>
                   <MenuButton fx:id="selectDoctorMenu" layoutX="43.0" layoutY="42.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="184.0" text="Doctor Type">
                     <items>
                       <MenuItem fx:id="doctorTypeGP" onAction="#handleGpMenuChoice" text="gp" />
                       <MenuItem fx:id="doctorTypeOrthopede" onAction="#handleSpecialistMenuChoice" text="orthopedic" />
+                      <MenuItem fx:id="doctorTypeEye" onAction="#handleSpecialistMenuChoice" text="eye" />
                     </items>
                   </MenuButton>
                   <Text layoutX="50.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Doctor Type" wrappingWidth="116.13671875" />
@@ -45,7 +46,7 @@
                       <TableColumn fx:id="setBranchColumn" prefWidth="126.0" text="Branch" />
                     </columns>
                   </TableView>
-                  <Button fx:id="setAppointmentBtn" layoutX="386.0" layoutY="42.0" mnemonicParsing="false" onAction="#handleSetButton" text="Set Appointment" />
+                  <Button fx:id="setAppointmentBtn" layoutX="262.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleSetButton" text="Set Appointment" />
                   <Button fx:id="getTimesBtn" layoutX="300.0" layoutY="211.0" mnemonicParsing="false" onAction="#handleGetTimesBtn" prefHeight="25.0" prefWidth="31.0" text="&gt;" />
                </children></AnchorPane>
       </content>
