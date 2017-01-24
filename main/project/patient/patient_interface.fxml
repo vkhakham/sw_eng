@@ -20,7 +20,8 @@
                       <TableColumn fx:id="futureDoctorRoleColumn" prefWidth="120.0" text="Doctor Role" />
                     </columns>
                   </TableView>
-                  <Button fx:id="refreshBtn" layoutX="14.0" layoutY="37.0" mnemonicParsing="false" onAction="#handleRefreshFutureButton" text="Refresh" />
+                  <Button fx:id="refreshBtn" layoutX="472.0" layoutY="37.0" mnemonicParsing="false" onAction="#handleRefreshFutureButton" text="Refresh" />
+                  <Button fx:id="cancelAppointmentBtn" layoutX="472.0" layoutY="84.0" mnemonicParsing="false" onAction="#handleCancelButton" prefHeight="25.0" prefWidth="57.0" text="Cancel" />
                </children></AnchorPane>
       </content>
     </Tab>
@@ -36,14 +37,16 @@
                   </MenuButton>
                   <Text layoutX="50.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Doctor Type" wrappingWidth="116.13671875" />
                   <Text layoutX="50.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Doctors" wrappingWidth="45.13671875" />
-                  <Text fx:id="timesText" layoutX="319.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Times" wrappingWidth="45.13671875" />
-                  <ListView fx:id="timesList" layoutX="319.0" layoutY="115.0" prefHeight="240.0" prefWidth="240.0" />
+                  <Text fx:id="timesText" layoutX="342.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Times" wrappingWidth="45.13671875" />
+                  <ListView fx:id="timesList" layoutX="342.0" layoutY="116.0" prefHeight="240.0" prefWidth="240.0" />
                   <TableView fx:id="setAppointmetsDoctorTable" layoutX="45.0" layoutY="116.0" prefHeight="240.0" prefWidth="240.0">
                     <columns>
                       <TableColumn fx:id="setDoctorNameColumn" prefWidth="113.0" text="Name" />
                       <TableColumn fx:id="setBranchColumn" prefWidth="126.0" text="Branch" />
                     </columns>
                   </TableView>
+                  <Button fx:id="setAppointmentBtn" layoutX="386.0" layoutY="42.0" mnemonicParsing="false" onAction="#handleSetButton" text="Set Appointment" />
+                  <Button fx:id="getTimesBtn" layoutX="300.0" layoutY="211.0" mnemonicParsing="false" onAction="#handleGetTimesBtn" prefHeight="25.0" prefWidth="31.0" text="&gt;" />
                </children></AnchorPane>
       </content>
     </Tab>

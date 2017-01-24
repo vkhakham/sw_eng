@@ -66,7 +66,7 @@ public class StaffInterfaceController extends AbstractClient {
     }
 
     @FXML
-    void GetPatientList(Event event) throws Exception {
+    void getPatientList(Event event) throws Exception {
         LocalDate chosenDate;
         if (!event.getSource().equals(pickToday)) {
             chosenDate = datePicker.getValue();
