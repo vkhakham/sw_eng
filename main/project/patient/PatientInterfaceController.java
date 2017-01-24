@@ -23,6 +23,7 @@ import java.util.List;
 public class PatientInterfaceController extends AbstractClient {
     private Integer sessionId;
     private Integer user;
+
     private Doctor doctorTimesAreShownFor;
 
     @FXML
@@ -59,6 +60,9 @@ public class PatientInterfaceController extends AbstractClient {
     private MenuItem doctorTypeOrthopede;
 
     @FXML
+    private MenuItem doctorTypeEye;
+
+    @FXML
     private ListView<String> timesList;
 
     @FXML
@@ -91,6 +95,12 @@ public class PatientInterfaceController extends AbstractClient {
         }
     }
 
+    /**
+     * handle responses from server
+     *
+     * @param objMsg Message from server
+     */
+
     @Override
     protected void handleMessageFromServer(Object objMsg){
         Message msg = Message.class.cast(objMsg);
@@ -111,7 +121,7 @@ public class PatientInterfaceController extends AbstractClient {
     }
 
     /**
-     * show available Appointments recieved from server in a list
+     * show available Appointments received from server in a listView
      *
      * @param msg Message from server
      */
@@ -121,6 +131,11 @@ public class PatientInterfaceController extends AbstractClient {
         Platform.runLater(() -> timesList.setItems(datesData));
     }
 
+    /**
+     * show specialist doctors list from server
+     *
+     * @param msg Server message
+     */
     private void handlePatientGetSpecialistDoctorList(Message msg) {
         ObservableList<Doctor> doctors = null;
         setBranchColumn.setCellValueFactory(new PropertyValueFactory<Doctor, String>("Branch"));
@@ -135,18 +150,6 @@ public class PatientInterfaceController extends AbstractClient {
                 timesList.getItems().clear();
             }
         });
-//        setAppointmetsDoctorTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Doctor>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Doctor> observable, Doctor oldValue, Doctor newValue) {
-//                if (!newValue.getRole().equals("dr_gp")) {
-//                    try {
-//                        sendToServer(new Message(Uri.PatientGetFreeAppointmentsForSpecialist, user, sessionId, ClientType.Patient, newValue.getId()));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
     }
 
     private void handlePatientGetFreeAppointmentsForGp(Message msg) {
