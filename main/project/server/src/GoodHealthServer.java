@@ -106,7 +106,7 @@ public class GoodHealthServer extends AbstractServer {
             reply.error = ErrorType.UserLoggedIn;
         }
         // if user doesn't exist - refuse log in.
-        if (!mySqlProvider.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
+        else if (!mySqlProvider.userExists(msg.id, Integer.class.cast(msg.data), msg.clientType)) {
             reply.data = Boolean.FALSE;
             reply.error = ErrorType.UserNotFound;
         } else {   // user exists and login is valid
