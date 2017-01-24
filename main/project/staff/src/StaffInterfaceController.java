@@ -1,4 +1,4 @@
-package staff;
+package staff.src;
 
 import common.*;
 import javafx.application.Platform;

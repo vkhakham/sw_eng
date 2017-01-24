@@ -1,4 +1,4 @@
-package staff;
+package staff.src;
 
 import common.ClientType;
 import common.Message;
@@ -80,7 +80,7 @@ public class LoginController extends AbstractClient {
             public void run() {
                 FXMLLoader loader = new FXMLLoader();
                 Stage primaryStage = (Stage) login_btn.getScene().getWindow();
-                String fxmlDocPath = "staff/patients_list.fxml";
+                String fxmlDocPath = "staff/src/patients_list.fxml";
                 try {
                     FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
                     loader.setController(controller);

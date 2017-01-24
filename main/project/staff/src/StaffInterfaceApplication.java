@@ -1,4 +1,4 @@
-package staff;
+package staff.src;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,10 +17,10 @@ public class StaffInterfaceApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        String fxmlDocPath = "staff/login_pane.fxml";
+        String fxmlDocPath = "staff/src/login_pane.fxml";
         FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
 
-        staff.LoginController controller = new staff.LoginController("localhost", 5555);
+        LoginController controller = new LoginController("localhost", 5555);
         loader.setController(controller);
         Scene login_scene = new Scene(loader.load(fxmlStream), 450, 200);
         primaryStage.setTitle("Login");
