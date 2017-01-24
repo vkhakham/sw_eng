@@ -161,8 +161,7 @@ class MySqlProvider {
                         rs.getString(3)));
             } else throw new RuntimeException("doctor id not found.");
             pstmt = conn.prepareStatement(Queries.GET_UNSCHEDULED_APPOINTMENTS_QUERY);
-            // TODO change to 30 90
-            pstmt.setInt(1, freeAppointments.getDoctor().getRole().equals("dr_gp") ? 2 : 5);
+            pstmt.setInt(1, freeAppointments.getDoctor().getRole().equals("dr_gp") ? 30 : 90);
             pstmt.setInt(2, doctorId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
