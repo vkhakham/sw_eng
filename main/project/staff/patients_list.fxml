@@ -17,7 +17,7 @@
         </columns>
       </TableView>
       <DatePicker fx:id="datePicker" layoutX="46.0" layoutY="26.0" />
-      <Button fx:id="pickToday" layoutX="428.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Today" />
-      <Button fx:id="showDate" layoutX="234.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#GetPatientList" text="Show" />
+      <Button fx:id="pickToday" layoutX="428.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#getPatientList" text="Today" />
+      <Button fx:id="showDate" layoutX="234.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#getPatientList" text="Show" />
    </children>
 </Pane>
