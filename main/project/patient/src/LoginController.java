@@ -1,4 +1,4 @@
-package patient;
+package patient.src;
 
 import common.ClientType;
 import common.Message;
@@ -15,6 +15,7 @@ import ocsf.client.AbstractClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 
 public class LoginController extends AbstractClient {
@@ -75,9 +76,8 @@ public class LoginController extends AbstractClient {
             public void run() {
                 FXMLLoader loader = new FXMLLoader();
                 Stage primaryStage = (Stage) login_btn.getScene().getWindow();
-                String fxmlDocPath = "patient/patient_interface.fxml";
                 try {
-                    FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
+                    InputStream fxmlStream = getClass().getResourceAsStream("/patient_interface.fxml");
                     loader.setController(controller);
                     primaryStage.setScene(new Scene(loader.load(fxmlStream), 600, 500));
                     primaryStage.setTitle("Patients List");

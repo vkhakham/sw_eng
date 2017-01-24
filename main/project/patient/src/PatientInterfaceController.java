@@ -1,4 +1,4 @@
-package patient;
+package patient.src;
 
 import common.*;
 import javafx.application.Platform;

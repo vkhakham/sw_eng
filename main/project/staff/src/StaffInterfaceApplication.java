@@ -1,4 +1,4 @@
-package patient;
+package staff.src;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 
 
-public class PatientInterfaceApplication extends Application {
+public class StaffInterfaceApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -17,10 +17,10 @@ public class PatientInterfaceApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        String fxmlDocPath = "patient/login_pane.fxml";
+        String fxmlDocPath = "staff/src/login_pane.fxml";
         FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
 
-        patient.LoginController controller = new patient.LoginController("localhost", 5555);
+        LoginController controller = new LoginController("localhost", 5555);
         loader.setController(controller);
         Scene login_scene = new Scene(loader.load(fxmlStream), 450, 200);
         primaryStage.setTitle("Login");
